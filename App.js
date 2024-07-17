@@ -1,5 +1,6 @@
 const express = require("express");
 const propertyRoute = require('./routes/propertyRoute');
+const reviewRoute = require("./routes/reviewRoute");
 const AppError = require("./errors/appError");
 const globalErrorHandler = require('./utils/errorController')
 const app = express();
@@ -20,7 +21,8 @@ app.use((req, res, next) => {
 
 
 app.use("/api/v1/properties", propertyRoute)
-
+app.use("/api/v1/reviews", reviewRoute);
+ 
 app.all("*", (req, res, next) => {
     next(new AppError("this route does not exist", 404))
 })

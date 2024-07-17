@@ -76,7 +76,7 @@ exports.updateProperty = catchAsync(async (req, res, next) => {
 })
 
 exports.getAProperty = catchAsync(async (req, res, next) => {
-    const property = await Property.findById(req.body.id);
+    const property = await Property.findById(req.params.id);
 
     res.status(200).json({
         status: 'success',
@@ -88,7 +88,7 @@ exports.getAProperty = catchAsync(async (req, res, next) => {
 })
 
 exports.deleteAProperty = catchAsync(async (req, res, next) => {
-    const property = await Property.findByIdAndDelete(req.body.id)
+    const property = await Property.findByIdAndDelete(req.params.id, req.body)
 
     res.status(200).json({
         status: 'success',

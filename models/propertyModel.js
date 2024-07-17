@@ -42,7 +42,13 @@ const propertySchema = new Schema({
     },
     exteriorFeatures: {
         type: String
-    }
+    },
+    reviews: [
+        {
+        type: mongoose.Schema.ObjectId,
+        ref: "Review"
+        }
+    ]
 })
 
 
