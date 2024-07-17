@@ -10,20 +10,24 @@ exports.createProperty = catchAsync(async (req, res, next) => {
     }
 
 
-    const { name, price, photos, map, location } = req.body;
+    const { name, price, images, map, location, amenities, exteriorFeatures, description, developmentStatus } = req.body;
 
 
-    if (!name || !price || !photos || !map || !location) {
+    if (!name || !price || !images || !map || !location) {
         return next(new AppError("all field are required", 400))
     } 
     
         const newProperty = await Property.create({
             name,
             price,
-            photos,
+            images,
             map,
-            location
-        }); 
+            location,
+            amenities,
+            exteriorFeatures,
+            description,
+            developmentStatus 
+        });  
 
         console.log('New Property:', newProperty); // Log created property
 
@@ -49,6 +53,50 @@ exports.getAllProperty = catchAsync(async(req, res, next) => {
         }
     })
    
+})
+
+
+exports.updateProperty = catchAsync(async (req, res, next) => {
+    const property = await Property.findByIdAndUpdate(req.params.id, req.body, {
+        new: true, 
+        runValidators: true
+    });
+
+    if (!property) {
+    return next(new AppError("Property does not exist", 404))
+}
+    res.status(200).json({
+        status: 'success',
+        message: "property succesfully updated",
+        data: {
+            property
+        }
+    })
+
+})
+
+exports.getAProperty = catchAsync(async (req, res, next) => {
+    const property = await Property.findById(req.body.id);
+
+    res.status(200).json({
+        status: 'success',
+        message: "property fetched successful",
+        data: {
+            property
+        }
+    })
+})
+
+exports.deleteAProperty = catchAsync(async (req, res, next) => {
+    const property = await Property.findByIdAndDelete(req.body.id)
+
+    res.status(200).json({
+        status: 'success',
+        message: "user succesfully deleted",
+        data: {
+           property : null,
+        }
+    })
 })
 
 

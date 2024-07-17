@@ -1,4 +1,4 @@
-const { createProperty, getAllProperty } = require("../controllers/propertyController");
+const { createProperty, getAllProperty, updateProperty, deleteAProperty, getAProperty } = require("../controllers/propertyController");
 const express = require('express');
 
 const router = express.Router();
@@ -9,5 +9,10 @@ router.
     
     router.get("/", getAllProperty)
 
+    router.patch("/updateAProperty/:id", updateProperty)
+router
+    .route('/:id')
+    .delete(deleteAProperty)
+    .get(getAProperty)
 
 module.exports = router;

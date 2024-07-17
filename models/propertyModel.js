@@ -18,13 +18,30 @@ const propertySchema = new Schema({
         type: String,
         required: [true, 'please insert the location of the property']
     },
-    photos: {
+    images: {
         type: [String],
         required: [true, 'property must have atlease one photo']
     },
     map: {
         type: String,
         required: [true, 'Please insert the location of the property']
+    },
+    description: {
+        type: String,
+        required: [true, "Please input description"]
+    },
+    developmentStatus: {
+        type: String,
+        required : [true, "Please input the development status"]
+    },
+    amenities: {
+        type: String,
+    },
+    interiorFeatures: {
+        type: String
+    },
+    exteriorFeatures: {
+        type: String
     }
 })
 
