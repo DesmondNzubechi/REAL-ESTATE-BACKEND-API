@@ -12,7 +12,8 @@ const propertySchema = new Schema({
         required: [true, "please input the price"]
     },
     date: {
-        type : Date
+        type: Date,
+        default : Date.now
     },
     location: {
         type: String,
@@ -25,7 +26,7 @@ const propertySchema = new Schema({
     map: {
         type: String,
         required: [true, 'Please insert the location of the property']
-    },
+    }, 
     description: {
         type: String,
         required: [true, "Please input description"]

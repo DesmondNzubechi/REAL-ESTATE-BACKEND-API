@@ -1,3 +1,4 @@
+const { uploadImg } = require('../cloudinary/Cloudinary');
 const AppError = require('../errors/appError');
 const Property = require('../models/propertyModel');
 const catchAsync = require('../utils/catchAsync');
@@ -13,14 +14,16 @@ exports.createProperty = catchAsync(async (req, res, next) => {
     const { name, price, images, map, location, amenities, exteriorFeatures, description, developmentStatus } = req.body;
 
 
-    if (!name || !price || !images || !map || !location) {
-        return next(new AppError("all field are required", 400))
-    } 
+    // if (!name || !price || !images || !map || !location) {
+    //     return next(new AppError("all field are required", 400))
+    // } 
+
+    const theImgUrl = await uploadImg(images)
     
         const newProperty = await Property.create({
             name,
             price,
-            images,
+            images: theImgUrl,
             map,
             location,
             amenities,
