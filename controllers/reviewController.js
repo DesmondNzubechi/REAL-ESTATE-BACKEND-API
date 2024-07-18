@@ -33,3 +33,31 @@ exports.createAReview = catchAsync(async (req, res, next) => {
 
 
 })
+
+exports.getAllReviews = catchAsync(async (req, res, next) => {
+    const reviews = await Review.find();
+
+  res.status(200).json({
+        status: "success",
+      message: "reviews succesfully fetched",
+        length : reviews.length,
+        data: {
+            result : reviews
+        }
+    })
+})
+
+exports.getPropertyReview = catchAsync(async (req, res, next) => {
+    const { property } = req.params
+    
+    const propertyReview = await Review.find({ property })
+    
+    res.status(200).json({
+        status: "success",
+        message: "property review succesfully fetched",
+        length: propertyReview.length,
+        data: { 
+            result : propertyReview
+        }
+    })
+})
