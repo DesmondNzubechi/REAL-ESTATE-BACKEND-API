@@ -1,3 +1,5 @@
+//PROPERTY MODEL
+
 const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
@@ -20,8 +22,8 @@ const propertySchema = new Schema({
         required: [true, 'please insert the location of the property']
     },
     images: {
-        type: [String],
-        required: [true, 'property must have atlease one photo']
+        type: [String], 
+        required: [true, 'Images is required']
     },
     map: {
         type: String,
