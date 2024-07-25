@@ -1,3 +1,5 @@
+//REVIEW CONTROLLER
+
 const Review = require('../models/reviewModel');
 const Property = require('../models/propertyModel');
 const catchAsync = require('../utils/catchAsync');

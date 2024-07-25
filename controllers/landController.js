@@ -2,7 +2,6 @@ const AppError = require("../errors/appError");
 const Land = require("../models/landModel");
 const catchAsync = require('../utils/catchAsync');
 
-
 exports.createLand = catchAsync(async (req, res, next) => {
     const { name, location, map} = req.body
     
@@ -28,6 +27,62 @@ exports.createLand = catchAsync(async (req, res, next) => {
         message: "land successfully created",
         data: {
             land : newLand
+        }
+    })
+})
+
+
+
+exports.getAllLand = catchAsync(async (req, res, next) => {
+    const allLand = await Land.find();
+
+   return res.status(200).json({
+        status: "success",
+        message: "all land successfully fetched",
+        data: {
+            allLand
+        }
+    })
+})
+
+exports.getALand = catchAsync(async (req, res, next) => {
+    
+    const land = await Land.findById(req.params.id);
+
+    return res.status(200).json({
+        status: 'success',
+        message: "land successfully fetched",
+        data: {
+            land
+        }
+    })
+
+})
+
+exports.updateALand = catchAsync(async (req, res, next) => {
+    const land = await Land.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidator: true,
+
+    })
+
+    res.status(200).json({
+        status: "success",
+        message: "Land successfully updated",
+        data: {
+            land
+        }
+    })
+})
+
+exports.deleteALand = catchAsync(async (req, res, next) => {
+    const deletedLand = await Land.findByIdAndDelete(req.params.id, req.body);
+
+    res.status(200).json({
+        status: "success",
+        message: "land successfully deleted",
+        data: {
+            land : null
         }
     })
 })

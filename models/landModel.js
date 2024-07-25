@@ -18,13 +18,7 @@ const landSchema = new Schema({
     images: {
         type: String,
         require: [true, "Image is required"]
-    },
-    reviews: [
-        {
-            type: mongoose.Schema.ObjectId,
-            ref: 'Review'
-        }
-    ]
+    }
 })
 
 const Land = mongoose.model("land", landSchema);

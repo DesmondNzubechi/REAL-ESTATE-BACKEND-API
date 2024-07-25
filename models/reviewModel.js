@@ -1,5 +1,6 @@
+//REVIEW MODEL
+
 const mongoose = require('mongoose');
-const { schema } = require('./propertyModel');
 
 const { Schema } = mongoose;
 

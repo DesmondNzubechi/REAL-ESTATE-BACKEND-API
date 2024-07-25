@@ -1,3 +1,5 @@
+//UTILS/CLOUDINARY.JS
+
 const cloudinary = require('../cloudinary/Cloudinary');
 
 const uploadImgToCloudinary = async (imageBuffer) => {

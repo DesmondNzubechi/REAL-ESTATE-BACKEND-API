@@ -1,3 +1,5 @@
+//CONTROLLERS/UPLOADCONTROLLER.JS
+
 const multer = require('multer');
 const { uploadImgToCloudinary } = require('../utils/cloudinary');
 const catchAsync = require('../utils/catchAsync');
