@@ -1,12 +1,23 @@
+const AppError = require("../errors/appError");
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 
 
 exports.signUpNewUser = catchAsync(async (req, res, next) => {
 
-    const { firstName, lastName, userName, email, password, phoneNumber, country, state } = req.body; 
+    const { firstName, lastName, userName, email, password, phoneNumber, country, state, confirmPassword } = req.body; 
 
-    const newUser = User.create({
+    const userExistWithEmail = await User.findOne({ email })
+    const userExistWithUsername = await User.findOne({ userName })
+    
+    if (userExistWithEmail) {
+        return next(new AppError("user already exist with email", 400))
+    }
+    if (userExistWithUsername) {
+        return next(new AppError("username already exist", 400))
+    }
+
+    const newUser = await User.create({
         firstName,
         lastName,
         userName,
@@ -14,10 +25,13 @@ exports.signUpNewUser = catchAsync(async (req, res, next) => {
         password,
         phoneNumber,
         country,
-        state
+        state,
+        confirmPassword
     })
     
-    res.status(201).json({
+     
+
+    return res.status(201).json({
         status: "success",
         message: "successfully signed up",
         data: {

@@ -13,7 +13,7 @@ const reviewSchema = new Schema({
         type: Number,
         min: 1.5,
         max: 5.0,
-        default: 3.5,
+        default: 2.0,
     },
     createdAt: {
         type: Date,

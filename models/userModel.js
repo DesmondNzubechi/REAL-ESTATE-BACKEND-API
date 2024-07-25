@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 
-const { Schema } = mongoose
+const { Schema } = mongoose;
 
 const userSchema = new Schema({
     firstName: {
@@ -16,13 +16,13 @@ const userSchema = new Schema({
     userName: {
         type: String,
         required: [true, "Kindly input your username"],
-        unique: [true, "This username already exist."]
+        unique: [true, "This username already exists."]
     },
     email: {
         type: String,
         required: [true, "Kindly input your email"],
-        unique: [true, 'email already exist'],
-        validate: [validator.isEmail, 'please chose a valid email']
+        unique: [true, 'Email already exists'],
+        validate: [validator.isEmail, 'Please choose a valid email']
     },
     password: {
         type: String,
@@ -31,48 +31,51 @@ const userSchema = new Schema({
     },
     confirmPassword: {
         type: String,
-        required: [true, "Please confirm email"],
-        validator: function (el) {
-            return el === this.password
-        },
-        message: "Password must be the same",
+        required: [true, "Please confirm your password"],
+        validate: {
+            validator: function (el) {
+                return el === this.password;
+            },
+            message: "Passwords must be the same"
+        }
     },
     profilePic: {
         type: String,
         default: ''
     },
     phoneNumber: {
-        type: Number, 
-        require: [true, "please insert your phone number"]
+        type: Number,
+        required: [true, "Please insert your phone number"]
     },
     country: {
         type: String,
-        require: [true, "please input your country name"]
+        required: [true, "Please input your country name"]
     },
     state: {
         type: String,
-        require: [true, "Kindly input your state"]
+        required: [true, "Kindly input your state"]
+    },
+    role: { 
+        type: String,
+        enum: ["user", "admin", "moderator"],
+        default: 'user'
     },
     active: {
         type: Boolean,
         default: true, 
         select : false
     }
-})
+});
 
-userSchema.pre("save", async (next) => {
-    
+userSchema.pre("save", async function(next) {
     if (!this.isModified("password")) return next();
 
-    this.password = bcrypt.hash(this.password, 12);
+    this.password = await bcrypt.hash(this.password, 12);
 
     this.confirmPassword = undefined;
-    next()
+    next();
+});
 
-
-})
-
-
-const User = mongoose.model("user", userSchema)
-
+const User = mongoose.model("User", userSchema);
+  
 module.exports = User;
