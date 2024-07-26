@@ -1,7 +1,8 @@
 const AppError = require("../errors/appError");
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const sendEmail = require("../utils/sendEmail");
 
 
 const {JWT_EXPIRES_IN, JWT_SECRET} = process.env
@@ -74,6 +75,43 @@ exports.loginUser = catchAsync(async (req, res, next) => {
             theUser
         }
     })
+
+
+})
+
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+    
+    if (!user) {
+        return next(new AppError('User does not exist', 400))
+    }
+
+    //generate reset token by calling the createResetToken function defined in the userModel
+
+    const resetToken = user.createPasswordResetToken();
+    await user.save({ validateBeforeSave: false });
+
+    const resetUrl = `${req.protocol}://${req.get("host")}/user/resetPassword/${resetToken}`;
+    const message = `forgot your passowrd? kindly submit your new password to ${resetUrl}. if you did not request for this kindly ignore.`
+
+    try {
+        sendEmail({
+            message,
+            subject: "This password reset token is valid for only 30 minutes",
+            email : user.email
+        })
+
+        res.status(200).json({
+            status: "success",
+            message : 'Token successfully sent to the user meail'
+        })
+    } catch (error) {
+        console.log(error);
+        return next(new AppError('an error occured while sending the reset password token'))
+    }
 
 
 })
