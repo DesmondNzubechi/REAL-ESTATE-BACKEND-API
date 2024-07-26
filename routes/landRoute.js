@@ -1,3 +1,6 @@
+
+//LAND ROUTE
+
 const express = require('express');
 const { uploadPhoto, uploadImageToCloudinary } = require('../controllers/uploadController');
 const { createLand, updateALand, deleteALand, getALand, getAllLand } = require('../controllers/landController');
@@ -7,7 +10,7 @@ const router = express.Router();
 router
     .route('/createLand')
     .post(uploadPhoto, uploadImageToCloudinary, createLand)
-
+ 
     router
     .route("/fetchAllLand")
     .get(getAllLand)

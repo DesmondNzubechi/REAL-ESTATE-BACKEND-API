@@ -1,11 +1,15 @@
+
+
+//LAND CONTROLLER
+
 const AppError = require("../errors/appError");
 const Land = require("../models/landModel");
 const catchAsync = require('../utils/catchAsync');
 
 exports.createLand = catchAsync(async (req, res, next) => {
-    const { name, location, map} = req.body
+    const { name, location, map, description} = req.body
     
-    if (!name || !location || !map) {
+    if (!name || !location || !map || description) {
      return next(new AppError("Kindly input all the field", 400))  
     }
 
@@ -19,7 +23,8 @@ exports.createLand = catchAsync(async (req, res, next) => {
         name,
         location,
         map,
-        images
+        images,
+        description
     })
 
     res.status(201).json({
@@ -28,7 +33,7 @@ exports.createLand = catchAsync(async (req, res, next) => {
         data: {
             land : newLand
         }
-    })
+    }) 
 })
 
 
