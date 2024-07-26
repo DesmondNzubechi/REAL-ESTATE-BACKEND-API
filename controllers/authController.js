@@ -1,7 +1,16 @@
 const AppError = require("../errors/appError");
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
+const jwt = require('jsonwebtoken')
 
+
+const {JWT_EXPIRES_IN, JWT_SECRET} = process.env
+
+const signToken = (id) => {
+    return jwt.sign({ id: id }, JWT_SECRET, {
+        expiresIn: JWT_EXPIRES_IN
+    })
+}
 
 exports.signUpNewUser = catchAsync(async (req, res, next) => {
 
@@ -29,7 +38,7 @@ exports.signUpNewUser = catchAsync(async (req, res, next) => {
         confirmPassword
     })
     
-     
+      
 
     return res.status(201).json({
         status: "success",
@@ -38,5 +47,33 @@ exports.signUpNewUser = catchAsync(async (req, res, next) => {
             newUser
         }
     })
+
+})
+
+
+exports.loginUser = catchAsync(async (req, res, next) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return next(new AppError("Please input your email or password"));
+    }
+
+    const theUser = await User.findOne({ email }).select("+password");
+
+    if (!theUser || !(await theUser.correctPassword(password, theUser.password))) {
+        return next(new AppError("incorrect password or email. please try again", 400))
+    }
+
+    const token = signToken(theUser._id);
+
+    res.status(200).json({
+        status: "success",
+        message: "login successful",
+        token,
+        data: {
+            theUser
+        }
+    })
+
 
 })
