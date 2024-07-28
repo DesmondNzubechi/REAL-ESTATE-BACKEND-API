@@ -164,6 +164,13 @@ exports.protectedRoute = catchAsync(async (req, res, next) => {
 })
 
 
+exports.restrictTo = (...role) => {
+    return (req, res, next) => {
+        if (!role.includes(req.user.role)) {
+            return next(new AppError('you are restricted from accessing this route', 401))
+        }
+    }
+}
 
 exports.resetPassword = catchAsync(async (req, res, next) => {
 
@@ -205,3 +212,45 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     
 })
 
+
+exports.changePassword = catchAsync(async (req, res, next) => {
+    const { currentPassword, password, confirmPassword } = req.body;
+    
+
+    if (password !== confirmPassword) {
+        return next(new AppError("confirm password and password not the same", 401))
+    }
+
+    if (currentPassword == password) {
+        return next(new AppError("Old password and new password can not be the same", 401))
+    }
+
+    const user = await User.findById(req.user.id).select("+password");
+
+    if (!user) {
+       return  next(new AppError("User does not exist", 400))
+    }
+
+    const isCorrectPassword = await user.correctPassword(currentPassword, user.password);
+
+    if (!isCorrectPassword) {
+      return  next(new AppError("incorrect current password", 400))
+    }
+
+    user.password = password;
+    user.confirmPassword = confirmPassword;
+
+    await user.save();
+
+    const newSigninToken = signToken(user._id);
+
+    res.status(200).json({
+        status: "success",
+        message: "password change successful",
+        token: newSigninToken,
+        data: {
+            user
+        }
+    })
+
+})
