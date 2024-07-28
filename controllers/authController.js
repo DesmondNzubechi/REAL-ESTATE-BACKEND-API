@@ -4,6 +4,7 @@ const catchAsync = require("../utils/catchAsync");
 const jwt = require('jsonwebtoken');
 const sendEmail = require("../utils/sendEmail");
 const crypto = require('crypto');
+const {promisify} = require('util')
 
 const {JWT_EXPIRES_IN, JWT_SECRET} = process.env
 
@@ -15,18 +16,24 @@ const signToken = (id) => {
 
 exports.signUpNewUser = catchAsync(async (req, res, next) => {
 
+    //destructure user information from req.body
     const { firstName, lastName, userName, email, password, phoneNumber, country, state, confirmPassword } = req.body; 
 
+    //find user by email
     const userExistWithEmail = await User.findOne({ email })
+    //find user with username
     const userExistWithUsername = await User.findOne({ userName })
     
+    //if user already exist with the provided email, return an error message
     if (userExistWithEmail) {
         return next(new AppError("user already exist with email", 400))
     }
+   //if user already exist with the provided username, return an error message
     if (userExistWithUsername) {
         return next(new AppError("username already exist", 400))
     }
 
+    //create new user if there is no user with the email and username
     const newUser = await User.create({
         firstName,
         lastName,
@@ -39,8 +46,10 @@ exports.signUpNewUser = catchAsync(async (req, res, next) => {
         confirmPassword
     })
     
+    //remove the password from the newUser properties before returning the success response
+    newUser.password = undefined;
       
-
+    //the success response
     return res.status(201).json({
         status: "success",
         message: "successfully signed up",
@@ -79,6 +88,8 @@ exports.loginUser = catchAsync(async (req, res, next) => {
 
 })
 
+
+
 exports.forgotPassword = catchAsync(async (req, res, next) => {
 
     const { email } = req.body;
@@ -115,6 +126,43 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
 
 })
+
+
+
+exports.protectedRoute = catchAsync(async (req, res, next) => {
+    
+    let token;
+    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+        token = req.headers.authorization.split(" ")[1];
+    }
+
+    if(!token){
+        return next(new AppError("You are not authorized", 401))
+    }
+
+    let decode;
+
+    try {
+        decode = await promisify(jwt.verify)(token, JWT_SECRET)
+    } catch (error) {
+        return next(new AppError("Token verification failed", 401))
+    }
+
+    const freshUser = await User.findById(decode.id);
+
+    if (!freshUser) {
+        return next(new AppError("User does not exist", 401))
+    }
+
+    if (freshUser.changePasswordAfter(decode.iat)) {
+        return next(new AppError("User recently changed password, please try again", 401))
+    }
+
+    req.user = freshUser;
+
+    next();
+})
+
 
 
 exports.resetPassword = catchAsync(async (req, res, next) => {
@@ -156,3 +204,4 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
     
 })
+

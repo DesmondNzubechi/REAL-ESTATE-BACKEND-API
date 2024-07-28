@@ -3,7 +3,6 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 
-
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
@@ -71,6 +70,7 @@ const userSchema = new Schema({
     passwordResetTokenExpires: Date
 });
 
+
 userSchema.methods.correctPassword = async function (candidatepassword, originalUserPassword) {
 
     return await bcrypt.compare(candidatepassword, originalUserPassword);
@@ -89,9 +89,24 @@ userSchema.methods.createPasswordResetToken = function () {
    
     this.passwordResetTokenExpires = Date.now() + 30 * 60 * 1000;
 
-    return resetToken
+    return resetToken;
 }
 
+userSchema.methods.changePasswordAfter = function (JWTTimestamp) {
+    
+    if (this.passwordChangeat) {
+        const changeTimestamp = parseInt(
+            thi.passwordChangeat.getTime() / 1000,
+            10
+        )
+
+        return JWTTimestamp < changeTimestamp
+    }
+
+    return false;
+
+}
+ 
 userSchema.pre("save", async function(next) {
     if (!this.isModified("password")) return next();
 
