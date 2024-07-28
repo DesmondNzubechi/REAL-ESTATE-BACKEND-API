@@ -66,7 +66,13 @@ const userSchema = new Schema({
         default: true, 
         select : false
     },
-    
+    emailVerified: {
+        type: Boolean,
+        default: false,
+    },
+    emailVerificationToken: String,
+    emailVerificationTokenExpires: Date,
+    passwordResetToken: String,
     passwordResetTokenExpires: Date
 });
 
@@ -76,6 +82,20 @@ userSchema.methods.correctPassword = async function (candidatepassword, original
 
     return await bcrypt.compare(candidatepassword, originalUserPassword);
 
+}
+
+userSchema.methods.verifyUserEmail = function () {
+    
+    const token = crypto.randomBytes(32).toString("hex");
+
+    this.emailVerificationToken = crypto
+        .createHash("sha256")
+        .update(token)
+        .digest("hex")
+    
+    this.emailVerificationTokenExpires = Date.now() + 60 * 60 * 1000;
+    
+    return token;
 }
 
 

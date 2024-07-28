@@ -33,6 +33,7 @@ exports.signUpNewUser = catchAsync(async (req, res, next) => {
         return next(new AppError("username already exist", 400))
     }
 
+
     //create new user if there is no user with the email and username
     const newUser = await User.create({
         firstName,
@@ -44,6 +45,18 @@ exports.signUpNewUser = catchAsync(async (req, res, next) => {
         country,
         state,
         confirmPassword
+    })
+
+    const verifyUser = await newUser.verifyUserEmail();
+    await newUser.save({ validateBeforeSave: false });
+
+    const verifyTokenUrl = `${req.protocol}://${req.get("host")}/api/v1/user/${verifyUser}`;
+    const message = `please verify your email by clicking on the following email: ${verifyTokenUrl}. This token expires immediately after 1hr.`;
+
+    sendEmail({
+        email: newUser.email,
+        subject: "Email verification",
+        message
     })
     
     //remove the password from the newUser properties before returning the success response
@@ -252,5 +265,40 @@ exports.changePassword = catchAsync(async (req, res, next) => {
             user
         }
     })
+
+})
+
+exports.verifyTheUserEmail = catchAsync(async (req, res, next) => {
+    
+    const { theToken } = req.params;
+
+    const token = crypto
+        .createHash(sha256)
+        .update(theToken)
+        .digest('hex');
+    
+    const theUser = await User.findOne({
+        emailVerificationToken: token,
+        emailVerified: false,
+        passwordResetTokenExpires: {$gt : Date.now()}
+    });;
+
+    if (!theUser) {
+        return next(new AppError("user does not exist or token already expired"));
+    }
+
+    theUser.emailVerificationToken = undefined,
+        theUser.emailVerified = true;
+    await theUser.save({
+        validateBeforeSave: false
+    });
+
+    res.status(200).json({
+        status: "success",
+        message: "email verification successful",
+    })
+
+
+
 
 })
