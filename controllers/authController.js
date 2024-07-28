@@ -82,7 +82,7 @@ exports.loginUser = catchAsync(async (req, res, next) => {
         token,
         data: {
             theUser
-        }
+        } 
     })
 
 

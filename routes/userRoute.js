@@ -1,6 +1,7 @@
 const express = require('express');
 const { signUpNewUser, loginUser, forgotPassword, resetPassword, changePassword, protectedRoute} = require('../controllers/authController');
-const { getAllUser } = require('../controllers/userController');
+const { getAllUser, createAUser, updateMe } = require('../controllers/userController');
+const { uploadPhoto, uploadImageToCloudinary } = require('../controllers/uploadController');
 
 const router = express.Router();
 
@@ -29,6 +30,14 @@ router
 router
     .route('/changePassword')
     .patch(protectedRoute, changePassword)
+
+router
+    .route("/createAUser")
+    .post(createAUser)
+
+router
+    .route('/updateUser/:id')
+    .patch(protectedRoute, uploadPhoto, uploadImageToCloudinary, updateMe)
 
 
 module.exports = router;

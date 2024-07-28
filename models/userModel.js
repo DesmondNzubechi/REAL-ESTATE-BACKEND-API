@@ -66,9 +66,10 @@ const userSchema = new Schema({
         default: true, 
         select : false
     },
-    passwordResetToken: String,
+    
     passwordResetTokenExpires: Date
 });
+
 
 
 userSchema.methods.correctPassword = async function (candidatepassword, originalUserPassword) {
@@ -76,6 +77,8 @@ userSchema.methods.correctPassword = async function (candidatepassword, original
     return await bcrypt.compare(candidatepassword, originalUserPassword);
 
 }
+
+
 
 userSchema.methods.createPasswordResetToken = function () {
 

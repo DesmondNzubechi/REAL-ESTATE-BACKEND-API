@@ -1,3 +1,4 @@
+const AppError = require("../errors/appError");
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 
@@ -86,6 +87,38 @@ exports.createAUser = catchAsync(async (req, res, next) => {
 
 })
 
+
+exports.updateMe = catchAsync(async (req, res, next) => {
+    const { id } = req.params;
+    const userUpdateInfo = req.body;
+
+    if (userUpdateInfo.password || userUpdateInfo.confirmPassword) {
+        return next(new AppError("This is not route for updating password", 401))
+    }
+
+    if (req.file) {
+        userUpdateInfo.profilePic = req.file.cloudinaryUrl;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(id, userUpdateInfo, {
+        new: true,
+        runValidators: true,
+
+    })
+
+    if (!updatedUser) {
+        return next(new AppError("User does not exist", 401))
+    }
+
+    res.status(200).json({
+        status: "success",
+        message: "User successfully updated",
+        data: {
+            user : updatedUser
+        }
+    })
+})
+
 exports.deleteAUser = catchAsync(async (req, res, next) => {
     const user = User.findByIdAndUpdate(req.user.id, { active: false })
     
@@ -97,4 +130,5 @@ exports.deleteAUser = catchAsync(async (req, res, next) => {
         }
     })
 })
+
 
