@@ -43,7 +43,7 @@ exports.createProperty = catchAsync(async (req, res, next) => {
 
 //FETCHING ALL THE PROPERTY DOCUMENT FROM DATABASE
 exports.getAllProperty = catchAsync(async(req, res, next) => {
-    const properties = await Property.find();
+    const properties = await Property.find().populate("reviews");
 
     //SUCCESS RESPONSE
     res.status(200).json({

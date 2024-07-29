@@ -1,9 +1,11 @@
+//NODE MAILER
+
 const nodemailer = require("nodemailer");
 const AppError = require("../errors/appError");
 
 const {EMAIL_HOST, EMAIL_PORT, EMAIL_PASSWORD, EMAIL_USERNAME, EMAIL_FROM} = process.env
 
-console.log("the email host", EMAIL_HOST, EMAIL_USERNAME) 
+//console.log("the email host", EMAIL_HOST, EMAIL_USERNAME) 
 
 const sendEmail = async (options) => {
 
@@ -11,7 +13,6 @@ const sendEmail = async (options) => {
         
 
         //create transport
-
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             host: EMAIL_HOST,
@@ -31,6 +32,7 @@ const sendEmail = async (options) => {
             subject : options.subject
         } 
 
+        //finally send the email
         await transporter.sendMail(mailOptions)
 
         console.log('successfully sent')

@@ -119,8 +119,10 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
     const resetToken = user.createPasswordResetToken();
 
+    //save it back to the database 
     await user.save({ validateBeforeSave: false });
 
+    //
     const resetUrl = `${req.protocol}://${req.get("host")}/api/v1/user/resetPassword/${resetToken}`;
     const message = `forgot your passowrd? kindly submit your new password to ${resetUrl}. if you did not request for this kindly ignore.`
 
@@ -139,8 +141,6 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
         console.log(error);
         return next(new AppError('an error occured while sending the reset password token'))
     }
-
-
 })
 
 
