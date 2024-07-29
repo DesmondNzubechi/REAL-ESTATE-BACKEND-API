@@ -5,7 +5,7 @@ const { Schema } = mongoose;
 const orderSchema = new Schema({
     property: {
         type: Schema.ObjectId,
-        ref: 'Property',
+        ref: 'properties',
         required: [true, 'order must belong to a property']
     },
     user: {

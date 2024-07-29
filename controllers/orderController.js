@@ -25,14 +25,16 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 exports.getAllOrderByAUser = catchAsync(async (req, res, next) => {
     const { userId } = req.params;
 
-    const orders = await Order.find({ id: userId }).populate("property").populate("user");
+    const orders = await Order.find({ user: userId }).populate("property");
 
-    if (!orders) {
-        return next(new AppError("There is no other by this user", 404))
+    console.log('Orders:', orders); // Log the fetched orders
+
+    if (!orders || orders.length === 0) {
+        return next(new AppError('No orders found for this user', 404));
     }
-
+ 
     res.status(200).json({
-        status: true,
+        status: "success",
         message: "orders successfully fetched",
         data: {
             orders
