@@ -34,6 +34,7 @@ exports.getAUser = catchAsync(async (req, res, next) => {
     })
 })
 
+
 exports.createAUser = catchAsync(async (req, res, next) => {
     
     const { firstName, lastName, userName, email, password, phoneNumber, country, state, confirmPassword, role } = req.body;
@@ -86,7 +87,7 @@ exports.createAUser = catchAsync(async (req, res, next) => {
     })
 
 })
-
+ 
 
 exports.updateMe = catchAsync(async (req, res, next) => {
     const { id } = req.params;
@@ -100,7 +101,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
         userUpdateInfo.profilePic = req.file.cloudinaryUrl;
     }
 
-    const updatedUser = await User.findByIdAndUpdate(id, userUpdateInfo, {
+    const updatedUser = await User.findByIdAndUpdate(id, {...userUpdateInfo, images:req.file.cloudinaryUrl? req.file.cloudinaryUrl : '' }, {
         new: true,
         runValidators: true,
 

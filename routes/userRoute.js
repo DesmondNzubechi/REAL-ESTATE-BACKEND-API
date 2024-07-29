@@ -1,6 +1,6 @@
 const express = require('express');
-const { signUpNewUser, loginUser, forgotPassword, resetPassword, changePassword, protectedRoute} = require('../controllers/authController');
-const { getAllUser, createAUser, updateMe } = require('../controllers/userController');
+const { signUpNewUser, loginUser, forgotPassword, resetPassword, changePassword, protectedRoute, verifyTheUserEmail} = require('../controllers/authController');
+const { getAllUser, createAUser, updateMe, getAUser, deleteAUser } = require('../controllers/userController');
 const { uploadPhoto, uploadImageToCloudinary } = require('../controllers/uploadController');
 
 const router = express.Router();
@@ -24,9 +24,7 @@ router
 router
     .route("/getAllUser")
     .get(getAllUser)
-
-    
-   
+ 
 router
     .route('/changePassword')
     .patch(protectedRoute, changePassword)
@@ -38,6 +36,20 @@ router
 router
     .route('/updateUser/:id')
     .patch(protectedRoute, uploadPhoto, uploadImageToCloudinary, updateMe)
+
+    router
+    .route('/deleteAUser')
+    .patch(protectedRoute, deleteAUser)
+
+
+router
+    .route("/verifyTheUserEmail/:theToken")
+    .patch(verifyTheUserEmail)
+
+router
+    .route('/getAUser/:id')
+    .get(getAUser)
+
 
 
 module.exports = router;

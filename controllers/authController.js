@@ -104,11 +104,13 @@ exports.loginUser = catchAsync(async (req, res, next) => {
 
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
-
+//destructure user email from the body
     const { email } = req.body;
 
+    //find user using the provided email
     const user = await User.findOne({ email });
     
+    //if the user does not exist, return an error message
     if (!user) {
         return next(new AppError('User does not exist', 400))
     }
@@ -116,6 +118,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     //generate reset token by calling the createResetToken function defined in the userModel
 
     const resetToken = user.createPasswordResetToken();
+
     await user.save({ validateBeforeSave: false });
 
     const resetUrl = `${req.protocol}://${req.get("host")}/api/v1/user/resetPassword/${resetToken}`;
@@ -149,7 +152,7 @@ exports.protectedRoute = catchAsync(async (req, res, next) => {
         token = req.headers.authorization.split(" ")[1];
     }
 
-    if(!token){
+    if(!token){ 
         return next(new AppError("You are not authorized", 401))
     }
 

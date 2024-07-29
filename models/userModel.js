@@ -40,7 +40,7 @@ const userSchema = new Schema({
             message: "Passwords must be the same"
         }
     },
-    profilePic: {
+    images: {
         type: String,
         default: ''
     },
