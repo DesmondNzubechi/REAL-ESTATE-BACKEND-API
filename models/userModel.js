@@ -119,7 +119,7 @@ userSchema.methods.changePasswordAfter = function (JWTTimestamp) {
     
     if (this.passwordChangeat) {
         const changeTimestamp = parseInt(
-            thi.passwordChangeat.getTime() / 1000,
+            this.passwordChangeat.getTime() / 1000,
             10
         )
 

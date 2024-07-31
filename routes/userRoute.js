@@ -25,10 +25,10 @@ router
     .route("/getAllUser")
     .get(getAllUser)
  
-router
+router 
     .route('/changePassword')
     .patch(protectedRoute, changePassword)
-
+ 
 router
     .route("/createAUser")
     .post(createAUser)

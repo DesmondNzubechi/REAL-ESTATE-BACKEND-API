@@ -6,32 +6,32 @@ const activitiesSchema = new Schema({
     user: {
         type: Schema.ObjectId,
         ref: "User",
-        required: [true, 'activity must belong to a user']
+        required: [true, 'Activity must belong to a user']
     },
     property: {
         type: Schema.ObjectId,
-        ref: "properties",
-        required: [true, "activity must belong to a property"]
+        ref: "Property"
     },
     activityType: {
         type: String,
-        enum: ['order_canceled', "order_approved", "order_rejected", "order_completed", "added_review"],
-        required: [true, "activities must have type"]
+        enum: ['canceled order', 'order_approved', 'order_rejected', 'order_completed', 'order_placed', 'added_review'],
+        required: [true, "Activity must have a type"]
     },
-    Timestamp: {
+    timestamp: {
         type: Date,
-        default: Date.now()
-    },
-    order: {
-        type: Schema.ObjectId,
-        ref: "Order",
-    },
-    detail: {
-        type: String,
-        required: true
-    }
-})
+        default: Date.now
+     },
+    // activityModel: {
+    //     type: String,
+    //     enum: ["Review", "Order"],
+    //     required: [true, 'Activity must have a model'],
+    // },
+    // detail: {
+    //     type: String,
+    //     required: [true, "Activity must have a detail"]
+    // }
+});
 
-const Activity = mongoose.model("Activities", activitiesSchema);
+const Activity = mongoose.model("Activity", activitiesSchema);
 
 module.exports = Activity;

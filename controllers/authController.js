@@ -156,22 +156,22 @@ exports.protectedRoute = catchAsync(async (req, res, next) => {
         return next(new AppError("You are not authorized", 401))
     }
 
-    let decode;
+    let decoded;
 
     try {
-        decode = await promisify(jwt.verify)(token, JWT_SECRET)
+        decoded = await promisify(jwt.verify)(token, JWT_SECRET)
     } catch (error) {
         return next(new AppError("Token verification failed", 401))
     }
 
-    const freshUser = await User.findById(decode.id);
+    const freshUser = await User.findById(decoded.id);
 
     if (!freshUser) {
         return next(new AppError("User does not exist", 401))
     }
 
-    if (freshUser.changePasswordAfter(decode.iat)) {
-        return next(new AppError("User recently changed password, please try again", 401))
+    if (freshUser.changePasswordAfter(decoded.iat)) {
+        return next(new AppError("User recently changed password, please try login again", 401))
     }
 
     req.user = freshUser;
@@ -186,39 +186,48 @@ exports.restrictTo = (...role) => {
             return next(new AppError('you are restricted from accessing this route', 401))
         }
     }
-}
+} 
+
+
 
 exports.resetPassword = catchAsync(async (req, res, next) => {
 
+    //destructure the the token from the param
     const { token } = req.params;
 
+    //hash the token using crypto, a nodejs inbuilt libary for hashing
     const theResetToken = crypto
         .createHash('sha256')
         .update(token)
         .digest('hex')
     
+    //find the user from the database using the hashed token and the password reset token expire
     const user = await User.findOne({
         passwordResetToken: theResetToken,
-        passwordResetTokenExpires: {$gt : Date.now()}
+        passwordResetTokenExpires: {$gt : Date.now()} 
     })
 
-    
+    //check if the user exist
     if (!user) {
         return next(new AppError("Invalid token or expired", 400))
     }
 
+    //destructure the the new password provided by the user from the body
     const { password, confirmPassword } = req.body;
     
-
+//update the password
     user.password = password;
     user.confirmPassword = confirmPassword
     user.passwordResetToken = undefined;
     user.passwordResetTokenExpires = undefined;
 
+    //Finally save the change to the database
     await user.save();
 
+    //issue a new token to the user
     const newSigninToken = signToken(user._id);
 
+    //success response
     res.status(200).json({
         status: 'success',
         message: "reset password successful",
@@ -227,6 +236,8 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
     
 })
+
+
 
 
 exports.changePassword = catchAsync(async (req, res, next) => {

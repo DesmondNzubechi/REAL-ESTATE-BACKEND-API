@@ -1,27 +1,45 @@
 const AppError = require("../errors/appError");
 const Order = require("../models/orderModel");
+const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
-
-
+const { logActivitiesController } = require("./activitiesController");
 
 exports.createOrder = catchAsync(async (req, res, next) => {
-    
     const { property, user } = req.body;
+
+    if (!property || !user) {
+        return next(new AppError('Property and user are required', 400));
+    }
 
     const order = await Order.create({
         property,
         user
     });
 
+    const findAUser = await User.findById(user);
+
+    if (!findAUser) {
+        return next(new AppError('User not found', 404));
+    }
+
+    try {
+        logActivitiesController(
+            user, // Pass the user ID directly
+            property, // Use order._id for relatedId
+            'order_placed', // Activity type
+        );
+    } catch (err) {
+        return next(new AppError('Failed to log activity', 500));
+    }
+
     res.status(201).json({
         status: "success",
-        message: "order successful",
+        message: "Order successful",
         data: {
             order
         }
-    })
-})
-
+    });
+});
 
 
 exports.getAllOrderByAUser = catchAsync(async (req, res, next) => {
