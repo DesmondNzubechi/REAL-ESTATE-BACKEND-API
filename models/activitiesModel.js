@@ -14,7 +14,7 @@ const activitiesSchema = new Schema({
     },
     activityType: {
         type: String,
-        enum: ['canceled order', 'order_approved', 'order_rejected', 'order_completed', 'order_placed', 'added_review'],
+        enum: ['order_canceled', 'order_approved', 'order_rejected', 'order_completed', 'order_placed', 'added_review'],
         required: [true, "Activity must have a type"]
     },
     timestamp: {

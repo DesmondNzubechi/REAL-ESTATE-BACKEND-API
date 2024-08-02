@@ -54,6 +54,7 @@ exports.signUpNewUser = catchAsync(async (req, res, next) => {
     const message = `please verify your email by clicking on the following email: ${verifyTokenUrl}. This token expires immediately after 1hr.`;
 
     sendEmail({
+        name: `${newUser.firstName} ${newUser.lastName}`,
         email: newUser.email,
         subject: "Email verification",
         message
@@ -85,6 +86,10 @@ exports.loginUser = catchAsync(async (req, res, next) => {
 
     if (!theUser || !(await theUser.correctPassword(password, theUser.password))) {
         return next(new AppError("incorrect password or email. please try again", 400))
+    }
+
+    if (theUser.emailVerified === false) {
+        return next(new AppError("Kindly verify your email", 400))
     }
 
     const token = signToken(theUser._id);
@@ -214,7 +219,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
     //destructure the the new password provided by the user from the body
     const { password, confirmPassword } = req.body;
-    
+     
 //update the password
     user.password = password;
     user.confirmPassword = confirmPassword

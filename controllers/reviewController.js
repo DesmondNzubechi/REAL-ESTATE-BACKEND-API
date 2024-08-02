@@ -4,10 +4,11 @@ const Review = require('../models/reviewModel');
 const Property = require('../models/propertyModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../errors/appError');
+const { logActivitiesController } = require('./activitiesController');
 
 
 exports.createAReview = catchAsync(async (req, res, next) => {
-    const { review, property, rating } = req.body;
+    const { review, property, rating, user } = req.body;
 
     if (!review || !property) {
         return next(new AppError("fields are required", 404))
@@ -16,14 +17,26 @@ exports.createAReview = catchAsync(async (req, res, next) => {
     const theReview = await Review.create({
         review,
         rating,
-        property
-    })
+        property,
+        user
+    }) 
 
     const theProperty = await Property.findById(property);
 
     theProperty.reviews.push(theReview._id);
 
     await theProperty.save();
+
+    try {
+        logActivitiesController(
+            user, // Pass the user ID directly
+            property, // property id
+            'added_review', // Activity type
+        );
+    } catch (err) {
+        return next(new AppError('Failed to log activity', 500));
+    }
+
 
     res.status(201).json({
         status: "success",

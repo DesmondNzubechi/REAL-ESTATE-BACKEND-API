@@ -2,6 +2,7 @@ const AppError = require("../errors/appError");
 const Order = require("../models/orderModel");
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
+const sendEmail = require("../utils/sendEmail");
 const { logActivitiesController } = require("./activitiesController");
 
 exports.createOrder = catchAsync(async (req, res, next) => {
@@ -12,15 +13,27 @@ exports.createOrder = catchAsync(async (req, res, next) => {
     }
 
     const order = await Order.create({
-        property,
+        property, 
         user
     });
 
-    const findAUser = await User.findById(user);
+    const theUser = await User.findById(theOrder.user);
 
-    if (!findAUser) {
-        return next(new AppError('User not found', 404));
+    if (!theUser) {
+        return next(new AppError("User does not exist", 401))
     }
+
+    const username = `${user.firstName} ${user.lastName}`;
+
+    const orderUrl = `${req.protocol}://${req.get("host")}/api/v1/order/getAnOrder/${order._id}`;
+    const message = `Your order for a property was successful. Kindly take a look at the order here: ${orderUrl}`
+
+    sendEmail({
+        subject: "Your property Order was successful",
+        message,
+        email: user.email,
+        name: username
+    })
 
     try {
         logActivitiesController(
@@ -53,6 +66,12 @@ exports.getAllOrderByAUser = catchAsync(async (req, res, next) => {
         return next(new AppError('No orders found for this user', 404));
     }
  
+    if (!findAUser) {
+        return next(new AppError('User not found', 404));
+    }
+
+
+
     res.status(200).json({
         status: "success",
         message: "orders successfully fetched",
@@ -73,6 +92,12 @@ exports.getOrder = catchAsync(async (req, res, next) => {
     if (!orderedProperty) {
         return next(new AppError("Property does not exist", 404));
     }
+
+    if (!findAUser) {
+        return next(new AppError('User not found', 404));
+    }
+
+
     res.status(200).json({
         status: "success",
         message: 'order fetched successful',
@@ -97,36 +122,35 @@ exports.getAllOrder = catchAsync(async (req, res, next) => {
     })
 })
 
-exports.cancelOrder = catchAsync(async (req, res, next) => {
-    
-   const  { orderId } = req.params;
 
-    const theOrder = await Order.findByIdAndUpdate(orderId, { status: 'canceled' }, { new: true });
-
-    if (!theOrder) {
-        return next(new AppError("order does not exist", 400))
-    }
-
-    res.status(200).json({
-        status: 'success',
-        message: "order canceled successfully",
-        data: {
-            theOrder
-        }
-    })
-
-})
-
+//APPROVE ORDER
 exports.approveOrder = catchAsync(async (req, res, next) => {
-    
+    //destructure the id of the order to be approved from the url parameter
     const  { orderId } = req.params;
  
+    //find the order from the database using its id an update it, in this case the status of the order will be updated to approved
      const theOrder = await Order.findByIdAndUpdate(orderId, { status: 'approved' }, { new: true });
  
+     //if order does not exist return an error message
      if (!theOrder) {
          return next(new AppError("order does not exist", 400))
-     }
+    }
+    
+    if (!findAUser) {
+        return next(new AppError('User not found', 404));
+    }
+
+    try {
+        logActivitiesController(
+            theOrder.user, // Pass the user ID directly
+            orderId, // Use order._id for relatedId
+            'order_placed', // Activity type
+        );
+    } catch (err) {
+        return next(new AppError('Failed to log activity', 500));
+    }
  
+     //if successful return a success response
      res.status(200).json({
          status: 'success',
          message: "order approved successfully",
@@ -136,17 +160,91 @@ exports.approveOrder = catchAsync(async (req, res, next) => {
      })
  
 })
+
+//CANCEL ORDER
+exports.cancelOrder = catchAsync(async (req, res, next) => {
+    //extract the id of the order to be cancelled from the url
+   const  { orderId } = req.params;
+
+    //find the order from the database using its id an update it, in this case the status of the order will be updated to canceled
+    const theOrder = await Order.findByIdAndUpdate(orderId, { status: 'canceled' }, { new: true });
+
+    //if order does not exist return an error message
+    if (!theOrder) {
+        return next(new AppError("order does not exist", 400))
+    }
+
+
+    if (!findAUser) {
+        return next(new AppError('User not found', 404));
+    }
+
+    try {
+        logActivitiesController(
+            theOrder.user, // Pass the user ID directly
+            orderId, // Use order._id for relatedId
+            'order_canceled', // Activity type
+        );
+    } catch (err) {
+        return next(new AppError('Failed to log activity', 500));
+    }
+    //if successful return a success response
+    res.status(200).json({
+        status: 'success',
+        message: "order canceled successfully",
+        data: {
+            theOrder
+        }
+    })
+
+})
  
+//REJECT ORDER
 exports.rejectOrder = catchAsync(async (req, res, next) => {
     
+     //destructure the id of the order to be cancelled from the url
     const  { orderId } = req.params;
  
+
+
+
+      //find the order from the database using its id an update it, in this case the status of the order will be updated to rejected
      const theOrder = await Order.findByIdAndUpdate(orderId, { status: 'rejected' }, { new: true });
  
+     //if order does not exist return an error message
      if (!theOrder) {
          return next(new AppError("order does not exist", 400))
      }
  
+    
+     try {
+        logActivitiesController(
+            theOrder.user, // Pass the user ID directly
+            orderId, // Use order._id for relatedId
+            'order_rejected', // Activity type
+        );
+    } catch (err) {
+        return next(new AppError('Failed to log activity', 500));
+    }
+
+    const user = await User.findById(theOrder.user);
+
+    if (!user) {
+        return next(new AppError("User does not exist", 401))
+    }
+
+    const username = `${user.firstName} ${user.lastName}`;
+
+    const orderUrl = `${req.protocol}://${req.get("host")}/api/v1/order/getAnOrder/${orderId}`;
+    const message = `Your order for a property has been rejected. Kindly take a look at the order here: ${orderUrl}`
+
+    sendEmail({
+        subject: "Your property Order is rejected",
+        message,
+        email: user.email,
+        name: username
+    })
+     //if successful return a success response
      res.status(200).json({
          status: 'success',
          message: "order rejected successfully",

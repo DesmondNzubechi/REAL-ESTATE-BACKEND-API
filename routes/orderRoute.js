@@ -1,6 +1,6 @@
 const express = require('express');
 const { protectedRoute } = require('../controllers/authController');
-const { createOrder, getAllOrderByAUser, getOrder, getAllOrder, cancelOrder, approveOrder } = require('../controllers/orderController');
+const { createOrder, getAllOrderByAUser, getOrder, getAllOrder, cancelOrder, approveOrder, rejectOrder } = require('../controllers/orderController');
 
 const router = express.Router();
 
@@ -14,7 +14,7 @@ router.get('/getAllOrder', getAllOrder);
 
 router.patch("/cancelOrder/:orderId", cancelOrder);
 router.patch("/approveOrder/:orderId", approveOrder);
-router.patch("/rejectOrder/:orderId", cancelOrder);
+router.patch("/rejectOrder/:orderId", rejectOrder);
 
 
 
