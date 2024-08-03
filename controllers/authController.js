@@ -47,12 +47,20 @@ exports.signUpNewUser = catchAsync(async (req, res, next) => {
         confirmPassword
     })
 
+    //generate the verification token
     const verifyUser = await newUser.verifyUserEmail();
+
+    //save it to the database
     await newUser.save({ validateBeforeSave: false });
 
+    //verification token url
     const verifyTokenUrl = `${req.protocol}://${req.get("host")}/api/v1/user/${verifyUser}`;
+
+    //message to be sent to the user
     const message = `please verify your email by clicking on the following email: ${verifyTokenUrl}. This token expires immediately after 1hr.`;
 
+
+    //call the nodemailer function to send the message to the user's email
     sendEmail({
         name: `${newUser.firstName} ${newUser.lastName}`,
         email: newUser.email,
@@ -286,6 +294,7 @@ exports.changePassword = catchAsync(async (req, res, next) => {
     })
 
 })
+
 
 exports.verifyTheUserEmail = catchAsync(async (req, res, next) => {
     
