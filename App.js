@@ -16,7 +16,7 @@ app.use(express.json())
 
 // Test route to ensure basic functionality
 app.get('/', (req, res) => {
-    res.send('API is working');
+    res.send('API is working');  
 });
 
 //testing the middleware

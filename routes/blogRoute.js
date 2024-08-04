@@ -1,5 +1,5 @@
 const express = require("express");
-const { createBlogPost } = require("../controllers/blogController");
+const { createBlogPost, updateBlogPost, publishABlogPost, unPublishABlogPost, deleteBlogPost, getAllBlogPost, getABlogPost } = require("../controllers/blogController");
 
 const router = express.Router();
 
@@ -7,6 +7,5 @@ const router = express.Router();
 router
     .route("/createBlogPost")
     .post(createBlogPost)
-
 
 module.exports = router;
