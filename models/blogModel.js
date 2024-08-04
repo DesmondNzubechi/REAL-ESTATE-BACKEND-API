@@ -15,7 +15,7 @@ const blogSchema = new Schema({
         type: String,
         required: [true, 'Please include the slug']
     },
-    image: {
+    images: {
         type : String
     },
     comments: [

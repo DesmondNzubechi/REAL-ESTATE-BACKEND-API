@@ -1,12 +1,13 @@
 const express = require("express");
 const { createBlogPost, updateBlogPost, publishABlogPost, unPublishABlogPost, deleteBlogPost, getAllBlogPost, getABlogPost } = require("../controllers/blogController");
+const { uploadPhoto, uploadImageToCloudinary } = require("../controllers/uploadController");
 
 const router = express.Router();
 
 
 router
     .route("/createBlogPost")
-    .post(createBlogPost)
+    .post(uploadPhoto, uploadImageToCloudinary, createBlogPost)
 
     router
     .route("/getAllBlogPost")

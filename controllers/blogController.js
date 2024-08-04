@@ -8,16 +8,27 @@ const catchAsync = require("../utils/catchAsync");
 
 exports.createBlogPost = catchAsync(async (req, res, next) => {
     
-    const { slug, title, contents } = req.body;
+    const { slug, title, content } = req.body;
 
-    if (!slug || !title || contents) {
+    if (!slug || !title || !content) {
         return next(new AppError("Please fill in the required field"))
     }
+
+    // let imageUrl;
+
+    // if (req.file) {
+    //     imageUrl = req.file.cloudinaryUrl;
+    // } else {
+    //     imageUrl = 'No image';
+    // }
+
+    const imageUrl = req.file ? req.file.cloudinaryUrl : '';
 
     const blog = await Blog.create({
         slug,
         title,
-        contents
+        content,
+        images: imageUrl
     })
 
     res.status(201).json({
@@ -50,6 +61,7 @@ exports.getABlogPost = catchAsync(async (req, res, next) => {
     const { id } = req.params;
 
     const blogPost = await Blog.findById(id);
+
 
     if (!blogPost) {
         
