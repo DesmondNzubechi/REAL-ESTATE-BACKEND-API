@@ -7,6 +7,7 @@ const userRoute = require('./routes/userRoute');
 const orderRoute = require('./routes/orderRoute');
 const activitiesRoute = require('./routes/activitiesRoute');
 const blogRoute = require("./routes/blogRoute");
+const commentRoute = require("./routes/commentRoute");
 const AppError = require("./errors/appError");
 const globalErrorHandler = require('./utils/errorController');
 const app = express();
@@ -33,6 +34,7 @@ app.use("/api/v1/user", userRoute);
 app.use('/api/v1/order', orderRoute);
 app.use('/api/v1/activities', activitiesRoute);
 app.use("/api/v1/blog", blogRoute);
+app.use("/api/v1/comments", commentRoute);
 
 app.all("*", (req, res, next) => {
     next(new AppError("this route does not exist", 404))
