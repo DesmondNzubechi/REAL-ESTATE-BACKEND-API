@@ -50,7 +50,7 @@ exports.getAllTheBlogComment = catchAsync(async (req, res, next) => {
     
     const allComment = await Comment.find().populate("user").populate("blog");
 
-    res.status(200).json({
+    res.status(200).json({ 
         status: "success",
         message: "comments fetch successful",
         length: allComment.length,
@@ -62,10 +62,16 @@ exports.getAllTheBlogComment = catchAsync(async (req, res, next) => {
 
 exports.getABlogComment = catchAsync(async (req, res, next) => {
 
-    const { commentId } = req.params;
+    const { blogId } = req.params;
 
-    const blogComment = await Comment.findOne({ blog: commentId }).populate("blog");
+    const findBlog = await Blog.findById(blogId);
 
+    if (!findBlog) {
+        return next (new AppError("Blog does not exist anymore", 400))
+    }
+ 
+    const blogComment = await Comment.findOne({ blog: blogId }).populate("user");
+ 
     res.status(200).json({
         status: "success",
         message: 'blog comment fetch successful',
@@ -84,7 +90,7 @@ exports.getABlogComment = catchAsync(async (req, res, next) => {
         res.status(200).json({
             status: 'success',
             message: "comment deleted successfully",
-            data: null
+            data: {data: null}
         })
     })
 

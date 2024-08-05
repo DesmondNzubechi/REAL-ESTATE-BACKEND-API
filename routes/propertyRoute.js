@@ -19,3 +19,4 @@ router
     .get(getAProperty)
 
 module.exports = router;
+ 

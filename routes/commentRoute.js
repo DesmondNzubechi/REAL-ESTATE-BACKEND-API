@@ -1,5 +1,5 @@
 const express = require("express");
-const { createComment, getAllTheComment, deleteComment, updateComment } = require("../controllers/commentController");
+const { createComment, getAllTheComment, deleteComment, updateComment, getAllTheBlogComment, getABlogComment } = require("../controllers/commentController");
 
 const router = express.Router();
 
@@ -10,11 +10,11 @@ router
 
     router
     .route("/getAllComment")
-    .get(getAllTheComment)
+    .get(getAllTheBlogComment)
 
-    router
-    .route("/getABlogComment/:commentId")
-    .get(getAllTheComment)
+    router 
+    .route("/getABlogComment/:blogId")
+    .get(getABlogComment)
 
     router
     .route("/deleteComment/:commentId")

@@ -3,7 +3,7 @@
 const app = require('./App');
 const dotenv = require('dotenv')
 const mongoose = require("mongoose");
-
+const cors = require("cors")
 dotenv.config({path : './config.env'}) 
 
  
@@ -15,6 +15,7 @@ mongoose.connect(DB).then(con => {
 }).catch(err => {
     console.log("an error occured", err)
 })
+
  
 app.listen(PORT, () => {
     console.log(`app running on ${PORT}`) 

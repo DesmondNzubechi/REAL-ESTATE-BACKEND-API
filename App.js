@@ -10,10 +10,17 @@ const blogRoute = require("./routes/blogRoute");
 const commentRoute = require("./routes/commentRoute");
 const AppError = require("./errors/appError");
 const globalErrorHandler = require('./utils/errorController');
+const cors = require("cors");
 const app = express();
 
 
 app.use(express.json())
+
+app.use(cors({
+    origin: 'http://localhost:3000',
+    methods: "GET, PATCH, POST, DELETE",
+    allowedHeaders: 'Content-Type, Authorization'
+}))
 
 // Test route to ensure basic functionality
 app.get('/', (req, res) => {
@@ -36,10 +43,12 @@ app.use('/api/v1/activities', activitiesRoute);
 app.use("/api/v1/blog", blogRoute);
 app.use("/api/v1/comments", commentRoute);
 
+
 app.all("*", (req, res, next) => {
     next(new AppError("this route does not exist", 404))
 })
  
+
 app.use(globalErrorHandler); 
 
 module.exports = app;

@@ -21,15 +21,6 @@ const activitiesSchema = new Schema({
         type: Date,
         default: Date.now
      },
-    // activityModel: {
-    //     type: String,
-    //     enum: ["Review", "Order"],
-    //     required: [true, 'Activity must have a model'],
-    // },
-    // detail: {
-    //     type: String,
-    //     required: [true, "Activity must have a detail"]
-    // }
 });
 
 const Activity = mongoose.model("Activity", activitiesSchema);
