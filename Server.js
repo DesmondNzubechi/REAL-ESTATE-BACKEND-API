@@ -16,7 +16,12 @@ mongoose.connect(DB).then(con => {
     console.log("an error occured", err)
 })
 
- 
-app.listen(PORT, () => {
-    console.log(`app running on ${PORT}`) 
-})
+
+if (process.env.NODE_ENV !== 'production') {
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
+    });
+  }
+  
+  module.exports = app; 
