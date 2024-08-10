@@ -3,9 +3,6 @@ const Blog = require("../models/blogModel");
 const catchAsync = require("../utils/catchAsync");
 
 
-
-
-
 exports.createBlogPost = catchAsync(async (req, res, next) => {
     
     const { slug, title, content } = req.body;
@@ -14,13 +11,6 @@ exports.createBlogPost = catchAsync(async (req, res, next) => {
         return next(new AppError("Please fill in the required field"))
     }
 
-    // let imageUrl;
-
-    // if (req.file) {
-    //     imageUrl = req.file.cloudinaryUrl;
-    // } else {
-    //     imageUrl = 'No image';
-    // }
 
     const imageUrl = req.file ? req.file.cloudinaryUrl : '';
 
@@ -102,7 +92,7 @@ exports.updateBlogPost = catchAsync(async (req, res, next) => {
     });
 
     if (!blogPost) {
-        return next(new AppError("This blog post does not exist", 400))
+        return next(new AppError("This blog post does not exist", 404))
     }
 
     res.status(200).json({
@@ -122,7 +112,7 @@ exports.publishABlogPost = catchAsync(async (req, res, next) => {
     const blogPost = await Blog.findByIdAndUpdate(id, { status: "published" }, { new: true });
 
     if (!blogPost) {
-        return next(new AppError("This blog post does not exist", 400));
+        return next(new AppError("This blog post does not exist", 404));
     }
 
     res.status(200).json({

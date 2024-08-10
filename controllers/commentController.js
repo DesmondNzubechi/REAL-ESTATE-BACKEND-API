@@ -14,11 +14,11 @@ exports.createComment = catchAsync(async (req, res, next) => {
     const findBlog = await Blog.findById(blog);
 
     if (!findUser) {
-        return next(new AppError("This user does not exist, try login before commenting", 400))
+        return next(new AppError("This user does not exist, try login before commenting", 404))
     }
 
     if (!findBlog) {
-        return next(new AppError("Blog post does not exist", 400))
+        return next(new AppError("Blog post does not exist", 404))
     }
 
     if (!comment || !user || !blog) {
