@@ -9,7 +9,7 @@ router
     .route('/signup')
     .post(signUpNewUser)
 
-router
+router 
     .route('/resetPassword/:token')
     .patch(resetPassword)
 

@@ -16,11 +16,7 @@ const app = express();
 
 app.use(express.json())
  
-app.use(cors({
-    origin: 'http://localhost:3000',
-    methods: "GET, PATCH, POST, DELETE",
-    allowedHeaders: 'Content-Type, Authorization'
-}))
+app.use(cors())
 
 // Test route to ensure basic functionality
 app.get('/', (req, res) => {
