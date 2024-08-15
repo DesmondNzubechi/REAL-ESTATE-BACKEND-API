@@ -48,7 +48,7 @@ router
 
 router
     .route('/getAUser/:id')
-    .get(getAUser)
+    .get(protectedRoute, getAUser)
 
 
 

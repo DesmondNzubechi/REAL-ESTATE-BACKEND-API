@@ -100,19 +100,41 @@ const sendProdError = (err, res) => {
         });
     }
 };
+const handleJWTErr = () => new AppError("Invalid token. Please login again", 401)
+
+const handleJWTExpiredError = () => new AppError("Your token already expired. Please login again", 401);
+const { NODE_ENV } = process.env;
+
 
 module.exports = (err, req, res, next) => {
-    err.statusCode = err.statusCode || 500;
+    err.statusCode = err.statusCode || 404;
     err.status = err.status || 'error';
 
-    let error = { ...err };
-    if (err.name === 'CastError') error = handleCastErrorDB(error);
-    if (err.code === 11000) error = handleDuplicateFieldsDB(error);
-    if (err.name === 'ValidationError') error = handleValidationError(error);
-
-    if (process.env.NODE_ENV === 'development') {
-        sendDevError(err, res);
-    } else if (process.env.NODE_ENV === 'production') {
-        sendProdError(error, res);
+    if (NODE_ENV === 'development') {
+        sendDevError(err, res)
+    } else if (NODE_ENV === 'production') {
+        let error = { ...err }
+        if (error.name === "CastError") error = handleCastErrorDB(error);
+        if (error.code === 11000) error = handleDuplicateFieldsDB(error);
+        if (error.name === "ValidationError") error = handleValidationError(error) 
+        if (error.name === 'JsonWebTokenError') error = handleJWTErr();
+        if (error.name === "TokenExpiredError") error = handleJWTExpiredError();
+        sendProdError(error, res)
     }
-};
+}
+
+// module.exports = (err, req, res, next) => {
+//     err.statusCode = err.statusCode || 500;
+//     err.status = err.status || 'error';
+
+//     let error = { ...err };
+//     if (err.name === 'CastError') error = handleCastErrorDB(error);
+//     if (err.code === 11000) error = handleDuplicateFieldsDB(error);
+//     if (err.name === 'ValidationError') error = handleValidationError(error);
+
+//     if (NODE_ENV === 'development') {
+//         sendDevError(err, res);
+//     } else if (NODE_ENV === 'production') {
+//         sendProdError(error, res);
+//     }
+// };

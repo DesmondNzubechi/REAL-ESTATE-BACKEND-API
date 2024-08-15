@@ -137,7 +137,7 @@ exports.loginUser = catchAsync(async (req, res, next) => {
     //         theUser
     //     } 
     // })
-    createAndSendToken(newUser, 200, res)
+    createAndSendToken(theUser, 200, res)
 
 
 })
@@ -187,38 +187,74 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
 
 exports.protectedRoute = catchAsync(async (req, res, next) => {
-    
-    let token;
-    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
-        token = req.headers.authorization.split(" ")[1];
-    }
+    // Get token from HttpOnly cookie
+    const token = req.cookies.jwt;
 
-    if(!token){ 
-        return next(new AppError("You are not authorized", 401))
+    if (!token) {
+        return next(new AppError("You are not authorized", 401));
     }
 
     let decoded;
 
     try {
-        decoded = await promisify(jwt.verify)(token, JWT_SECRET)
+        // Verify the token
+        decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
     } catch (error) {
-        return next(new AppError("Token verification failed", 401))
+        return next(new AppError("Token verification failed", 401));
     }
 
+    // Check if user exists
     const freshUser = await User.findById(decoded.id);
 
     if (!freshUser) {
-        return next(new AppError("User does not exist", 401))
+        return next(new AppError("User does not exist", 401));
     }
 
+    // Check if the user has changed the password after the token was issued
     if (freshUser.changePasswordAfter(decoded.iat)) {
-        return next(new AppError("User recently changed password, please try login again", 401))
+        return next(new AppError("User recently changed password, please log in again", 401));
     }
 
+    // Store the user in the request object
     req.user = freshUser;
 
     next();
-})
+});
+ 
+
+// exports.protectedRoute = catchAsync(async (req, res, next) => {
+    
+//     let token;
+//     if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+//         token = req.headers.authorization.split(" ")[1];
+//     }
+
+//     if(!token){ 
+//         return next(new AppError("You are not authorized", 401))
+//     }
+
+//     let decoded;
+
+//     try {
+//         decoded = await promisify(jwt.verify)(token, JWT_SECRET)
+//     } catch (error) {
+//         return next(new AppError("Token verification failed", 401))
+//     }
+
+//     const freshUser = await User.findById(decoded.id);
+
+//     if (!freshUser) {
+//         return next(new AppError("User does not exist", 401))
+//     }
+
+//     if (freshUser.changePasswordAfter(decoded.iat)) {
+//         return next(new AppError("User recently changed password, please try login again", 401))
+//     }
+
+//     req.user = freshUser;
+
+//     next();
+// })
 
 
 exports.restrictTo = (...role) => {
