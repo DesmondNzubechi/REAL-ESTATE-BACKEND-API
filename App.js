@@ -20,7 +20,7 @@ app.use(express.json())
 app.use(cookieParser())
  
 app.use(cors({
-    origin: 'https://home-features-backend.vercel.app',
+    origin: process.env.originUrl,
     credentials: true
 }))
 
