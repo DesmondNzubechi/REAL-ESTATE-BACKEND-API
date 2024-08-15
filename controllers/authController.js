@@ -6,7 +6,7 @@ const sendEmail = require("../utils/sendEmail");
 const crypto = require('crypto');
 const {promisify} = require('util')
 
-const {JWT_EXPIRES_IN, JWT_SECRET} = process.env
+const {JWT_EXPIRES_IN, JWT_SECRET, JWT_COOKIE_EXPIRES_IN, NODE_ENV} = process.env
 
 const signToken = (id) => {
     return jwt.sign({ id: id }, JWT_SECRET, {
@@ -17,7 +17,6 @@ const signToken = (id) => {
 const createAndSendToken = (user, statusCode, res) => {
     const token = signToken(user._id);
 
-    const { JWT_COOKIE_EXPIRES_IN, NODE_ENV } = process.env;
 
     const cookieOptions = {
         expires: new Date(Date.now() + JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
@@ -266,6 +265,41 @@ exports.restrictTo = (...role) => {
 } 
 
 
+exports.getMe = catchAsync(async (req, res, next) => {
+    
+    const token = req.cookies.jwt;
+
+    if (!token) {
+        return next(new AppError("You are not authorized to access this route", 401))
+    }
+
+    let decoded;
+
+    try {
+        decoded = await promisify(jwt.verify)(token, JWT_SECRET)
+    } catch (error) {
+       return next(new AppError("Token verification failed", 400))
+    }
+
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+        return next(new AppError("User not found", 404))
+    }
+
+    if (user.changePasswordAfter(decoded.iat)) {
+        return next(new AppError("User recently changed password, kindly login again", 400))
+    }
+
+    res.status(200).json({
+        status: "success",
+        data: {
+            user
+        }
+    })
+
+})
+
 
 exports.resetPassword = catchAsync(async (req, res, next) => {
 
@@ -392,5 +426,22 @@ exports.verifyTheUserEmail = catchAsync(async (req, res, next) => {
 
 
 
+
+})
+
+
+exports.logoutUser = catchAsync(async (req, res, next) => {
+    const cookieOptions = {
+        expiresIn: Date(Date.now() + 5 * 1000),
+        httpOnly: true,
+        secure: NODE_ENV === "production" && true,
+    };
+
+    res.cookie("jwt", "logged out", cookieOptions);
+
+    res.status(200).json({
+        status: "success",
+        message : "logout successful"
+    })
 
 })

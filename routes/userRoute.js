@@ -1,5 +1,5 @@
 const express = require('express');
-const { signUpNewUser, loginUser, forgotPassword, resetPassword, changePassword, protectedRoute, verifyTheUserEmail} = require('../controllers/authController');
+const { signUpNewUser, loginUser, forgotPassword, resetPassword, changePassword, protectedRoute, verifyTheUserEmail, getMe, logoutUser} = require('../controllers/authController');
 const { getAllUser, createAUser, updateMe, getAUser, deleteAUser } = require('../controllers/userController');
 const { uploadPhoto, uploadImageToCloudinary } = require('../controllers/uploadController');
 
@@ -50,6 +50,13 @@ router
     .route('/getAUser/:id')
     .get(protectedRoute, getAUser)
 
+router
+    .route('/me')
+    .get(getMe)
+
+    router
+    .route('/logout')
+    .post(logoutUser)
 
 
 module.exports = router;

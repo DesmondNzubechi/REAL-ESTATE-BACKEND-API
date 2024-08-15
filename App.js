@@ -10,11 +10,14 @@ const blogRoute = require("./routes/blogRoute");
 const commentRoute = require("./routes/commentRoute");
 const AppError = require("./errors/appError");
 const globalErrorHandler = require('./utils/errorController');
+const cookieParser = require("cookie-parser")
 const cors = require("cors");
 const app = express();
 
 
 app.use(express.json())
+
+app.use(cookieParser())
  
 app.use(cors())
 
