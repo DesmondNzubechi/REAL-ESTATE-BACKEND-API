@@ -96,9 +96,9 @@ exports.loginUser = catchAsync(async (req, res, next) => {
         return next(new AppError("incorrect password or email. please try again", 400))
     }
 
-    if (theUser.emailVerified === false) {
-        return next(new AppError("Kindly verify your email", 400))
-    }
+    // if (theUser.emailVerified === false) {
+    //     return next(new AppError("Kindly verify your email", 400))
+    // }
 
     const token = signToken(theUser._id);
 
