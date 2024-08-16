@@ -296,40 +296,75 @@ exports.restrictTo = (...role) => {
 } 
 
 
-exports.getMe = catchAsync(async (req, res, next) => {
+// exports.getMe = catchAsync(async (req, res, next) => {
     
-    const token = req.cookies.jwt;
+//     const token = req.cookies.jwt;
+
+//     if (!token) {
+//         return next(new AppError("You are not authorized to access this route", 401))
+//     }
+
+//     let decoded;
+
+//     try {
+//         decoded = await promisify(jwt.verify)(token, JWT_SECRET)
+//     } catch (error) {
+//        return next(new AppError("Token verification failed", 400))
+//     }
+
+//     const user = await User.findById(decoded.id);
+
+//     if (!user) {
+//         return next(new AppError("User not found", 404))
+//     }
+
+//     if (user.changePasswordAfter(decoded.iat)) {
+//         return next(new AppError("User recently changed password, kindly login again", 400))
+//     }
+
+//     res.status(200).json({
+//         status: "success",
+//         data: {
+//             user
+//         }
+//     })
+
+// })
+
+exports.getMe = catchAsync(async (req, res, next) => {
+    const token = req.Cookies.jwt;
 
     if (!token) {
-        return next(new AppError("You are not authorized to access this route", 401))
+        return next(new AppError("You are not authorized to access this route", 401));
     }
 
     let decoded;
-
     try {
-        decoded = await promisify(jwt.verify)(token, JWT_SECRET)
+        decoded = await promisify(jwt.verify)(token, JWT_SECRET);
+        console.log('Token decoded:', decoded);
     } catch (error) {
-       return next(new AppError("Token verification failed", 400))
+        return next(new AppError("Token verification failed", 400));
     }
 
     const user = await User.findById(decoded.id);
+    console.log('User found:', user);
 
     if (!user) {
-        return next(new AppError("User not found", 404))
+        return next(new AppError("User not found", 404));
     }
 
     if (user.changePasswordAfter(decoded.iat)) {
-        return next(new AppError("User recently changed password, kindly login again", 400))
+        return next(new AppError("User recently changed password, kindly login again", 400));
     }
 
     res.status(200).json({
         status: "success",
         data: {
-            user
-        }
-    })
+            user,
+        },
+    });
+});
 
-})
 
 
 exports.resetPassword = catchAsync(async (req, res, next) => {
