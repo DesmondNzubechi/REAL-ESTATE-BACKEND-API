@@ -47,12 +47,16 @@ const createAndSendToken = (user, statusCode, res) => {
     const cookieOptions = {
         expires: new Date(Date.now() + parseInt(process.env.JWT_COOKIE_EXPIRES_IN, 10) * 24 * 60 * 60 * 1000), // Ensure JWT_COOKIE_EXPIRES_IN is a number
         httpOnly: true, // Prevents JavaScript from accessing the cookie
+        secure: NODE_ENV === "production",
+    sameSite: "Lax",
     };
 
+    
+
     // In production, make sure the cookie is only sent over HTTPS
-    if (process.env.NODE_ENV === 'production') {
-        cookieOptions.secure = true; // Cookies should only be sent over HTTPS
-    }
+    // if (process.env.NODE_ENV === 'production') {
+    //     cookieOptions.secure = true; // Cookies should only be sent over HTTPS
+    // }
 
     // Set the cookie with the JWT token
     res.cookie('jwt', token, cookieOptions);
@@ -332,7 +336,9 @@ exports.restrictTo = (...role) => {
 // })
 
 exports.getMe = catchAsync(async (req, res, next) => {
-    const token = req.Cookies.jwt;
+    const token = req.cookies.jwt;
+
+    console.log(token, "token");
 
     if (!token) {
         return next(new AppError("You are not authorized to access this route", 401));
