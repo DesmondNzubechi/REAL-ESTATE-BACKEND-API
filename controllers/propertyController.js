@@ -50,7 +50,7 @@ exports.getAllProperty = catchAsync(async(req, res, next) => {
         status: 'success',
         message: 'succesfully fetched users',
         lenght : properties.length,
-        data: {
+        data: { 
             properties
         }
     })

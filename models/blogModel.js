@@ -8,7 +8,7 @@ const blogSchema = new Schema({
         required: [true, 'Title require']
     },
     content: {
-        type: String,
+        type: String, 
         required: [true, 'blog contents is required']
     },
     slug: {

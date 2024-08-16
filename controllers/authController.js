@@ -48,7 +48,6 @@ const createAndSendToken = (user, statusCode, res) => {
         expires: new Date(Date.now() + parseInt(process.env.JWT_COOKIE_EXPIRES_IN, 10) * 24 * 60 * 60 * 1000), // Ensure JWT_COOKIE_EXPIRES_IN is a number
         httpOnly: true, // Prevents JavaScript from accessing the cookie
         secure: NODE_ENV === "production",
-    sameSite: "Lax",
     };
 
     

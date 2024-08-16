@@ -34,7 +34,7 @@ exports.createBlogPost = catchAsync(async (req, res, next) => {
 
 exports.getAllBlogPost = catchAsync(async (req, res, next) => {
     
-    const allTheBlogPost = await Blog.find();
+    const allTheBlogPost = await Blog.find().populate("comments");
 
     res.status(200).json({
         status: "success",
