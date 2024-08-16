@@ -14,29 +14,60 @@ const signToken = (id) => {
     })
 }
 
+// const createAndSendToken = (user, statusCode, res) => {
+//     const token = signToken(user._id);
+
+
+//     const cookieOptions = {
+//         expires: new Date(Date.now() + JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
+//         httpOnly : true
+//     }
+
+//     if (NODE_ENV === "production") cookieOptions.secure = true;
+
+//     res.cookie("jwt", token, cookieOptions);
+
+//     user.password = undefined;
+
+//     res.status(statusCode).json({
+//         status: "success",
+//         // token,
+//         data: {
+//             user
+//         }
+//     })
+// }
+
+
 const createAndSendToken = (user, statusCode, res) => {
+    // Generate JWT token
     const token = signToken(user._id);
 
-
+    // Configure cookie options
     const cookieOptions = {
-        expires: new Date(Date.now() + JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
-        httpOnly : true
+        expires: new Date(Date.now() + parseInt(process.env.JWT_COOKIE_EXPIRES_IN, 10) * 24 * 60 * 60 * 1000), // Ensure JWT_COOKIE_EXPIRES_IN is a number
+        httpOnly: true, // Prevents JavaScript from accessing the cookie
+    };
+
+    // In production, make sure the cookie is only sent over HTTPS
+    if (process.env.NODE_ENV === 'production') {
+        cookieOptions.secure = true; // Cookies should only be sent over HTTPS
     }
 
-    if (NODE_ENV === "production") cookieOptions.secure = true;
+    // Set the cookie with the JWT token
+    res.cookie('jwt', token, cookieOptions);
 
-    res.cookie("jwt", token, cookieOptions);
-
+    // Exclude the password from the response
     user.password = undefined;
 
+    // Send the response
     res.status(statusCode).json({
-        status: "success",
-        // token,
+        status: 'success',
         data: {
-            user
-        }
-    })
-}
+            user,
+        },
+    });
+};
 
 
 exports.signUpNewUser = catchAsync(async (req, res, next) => {
