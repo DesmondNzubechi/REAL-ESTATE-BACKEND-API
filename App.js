@@ -15,14 +15,28 @@ const cors = require("cors");
 const app = express();
 
 
+
 app.use(express.json())
 
 app.use(cookieParser())
  
-app.use(cors({
+// app.use(cors({
+//     origin: process.env.originUrl,
+//     credentials: true
+// }))
+
+const corsOptions = {
     origin: process.env.originUrl,
-    credentials: true
-}))
+    methods: 'GET,POST,PUT,DELETE,PATCH',
+    allowedHeaders: 'Content-Type, Authorization',
+    credentials: true,
+  };
+  
+  app.use(cors(corsOptions));
+  
+  // Handle preflight requests
+  app.options('*', cors(corsOptions));
+
 
 // Test route to ensure basic functionality
 app.get('/', (req, res) => {
