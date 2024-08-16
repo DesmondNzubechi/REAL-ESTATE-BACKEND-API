@@ -6,6 +6,7 @@ const sendEmail = require("../utils/sendEmail");
 const crypto = require('crypto');
 const {promisify} = require('util')
 
+
 const {JWT_EXPIRES_IN, JWT_SECRET, JWT_COOKIE_EXPIRES_IN, NODE_ENV} = process.env
 
 const signToken = (id) => {
@@ -14,29 +15,6 @@ const signToken = (id) => {
     })
 }
 
-// const createAndSendToken = (user, statusCode, res) => {
-//     const token = signToken(user._id);
-
-
-//     const cookieOptions = {
-//         expires: new Date(Date.now() + JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
-//         httpOnly : true
-//     }
-
-//     if (NODE_ENV === "production") cookieOptions.secure = true;
-
-//     res.cookie("jwt", token, cookieOptions);
-
-//     user.password = undefined;
-
-//     res.status(statusCode).json({
-//         status: "success",
-//         // token,
-//         data: {
-//             user
-//         }
-//     })
-// }
 
 
 const createAndSendToken = (user, statusCode, res) => {
@@ -45,18 +23,17 @@ const createAndSendToken = (user, statusCode, res) => {
 
     // Configure cookie options
     const cookieOptions = {
-        expires: new Date(Date.now() + parseInt(process.env.JWT_COOKIE_EXPIRES_IN, 10) * 24 * 60 * 60 * 1000), // Ensure JWT_COOKIE_EXPIRES_IN is a number
+        expires: new Date(Date.now() + parseInt(JWT_COOKIE_EXPIRES_IN, 10) * 24 * 60 * 60 * 1000), // Ensure JWT_COOKIE_EXPIRES_IN is a number
         httpOnly: true, // Prevents JavaScript from accessing the cookie
-        secure: NODE_ENV === "production",
-        sameSite : "None",
+        sameSite : "None", //
     };
 
     
 
     // In production, make sure the cookie is only sent over HTTPS
-    // if (process.env.NODE_ENV === 'production') {
-    //     cookieOptions.secure = true; // Cookies should only be sent over HTTPS
-    // }
+    if (process.env.NODE_ENV === 'production') {
+        cookieOptions.secure = true; // Cookies should only be sent over HTTPS
+    }
 
     // Set the cookie with the JWT token
     res.cookie('jwt', token, cookieOptions);
@@ -161,16 +138,6 @@ exports.loginUser = catchAsync(async (req, res, next) => {
     //     return next(new AppError("Kindly verify your email", 400))
     // }
 
-    // const token = signToken(theUser._id);
-
-    // res.status(200).json({
-    //     status: "success",
-    //     message: "login successful",
-    //     token,
-    //     data: {
-    //         theUser
-    //     } 
-    // })
     createAndSendToken(theUser, 200, res)
 
 
@@ -256,41 +223,6 @@ exports.protectedRoute = catchAsync(async (req, res, next) => {
 });
  
 
-// exports.protectedRoute = catchAsync(async (req, res, next) => {
-    
-//     let token;
-//     if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
-//         token = req.headers.authorization.split(" ")[1];
-//     }
-
-//     if(!token){ 
-//         return next(new AppError("You are not authorized", 401))
-//     }
-
-//     let decoded;
-
-//     try {
-//         decoded = await promisify(jwt.verify)(token, JWT_SECRET)
-//     } catch (error) {
-//         return next(new AppError("Token verification failed", 401))
-//     }
-
-//     const freshUser = await User.findById(decoded.id);
-
-//     if (!freshUser) {
-//         return next(new AppError("User does not exist", 401))
-//     }
-
-//     if (freshUser.changePasswordAfter(decoded.iat)) {
-//         return next(new AppError("User recently changed password, please try login again", 401))
-//     }
-
-//     req.user = freshUser;
-
-//     next();
-// })
-
-
 exports.restrictTo = (...role) => {
     return (req, res, next) => {
         if (!role.includes(req.user.role)) {
@@ -299,41 +231,6 @@ exports.restrictTo = (...role) => {
     }
 } 
 
-
-// exports.getMe = catchAsync(async (req, res, next) => {
-    
-//     const token = req.cookies.jwt;
-
-//     if (!token) {
-//         return next(new AppError("You are not authorized to access this route", 401))
-//     }
-
-//     let decoded;
-
-//     try {
-//         decoded = await promisify(jwt.verify)(token, JWT_SECRET)
-//     } catch (error) {
-//        return next(new AppError("Token verification failed", 400))
-//     }
-
-//     const user = await User.findById(decoded.id);
-
-//     if (!user) {
-//         return next(new AppError("User not found", 404))
-//     }
-
-//     if (user.changePasswordAfter(decoded.iat)) {
-//         return next(new AppError("User recently changed password, kindly login again", 400))
-//     }
-
-//     res.status(200).json({
-//         status: "success",
-//         data: {
-//             user
-//         }
-//     })
-
-// })
 
 exports.getMe = catchAsync(async (req, res, next) => {
     const token = req.cookies.jwt;
