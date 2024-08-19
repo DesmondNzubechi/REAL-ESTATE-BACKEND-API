@@ -3,7 +3,7 @@ const { protectedRoute } = require('../controllers/authController');
 const { createOrder, getAllOrderByAUser, getOrder, getAllOrder, cancelOrder, approveOrder, rejectOrder } = require('../controllers/orderController');
 
 const router = express.Router();
-
+ 
 router.use(protectedRoute);
 
 router.post('/createOrder', createOrder)

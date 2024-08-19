@@ -7,7 +7,7 @@ const crypto = require('crypto');
 const {promisify} = require('util')
 
 
-const {JWT_EXPIRES_IN, JWT_SECRET, JWT_COOKIE_EXPIRES_IN, NODE_ENV} = process.env
+const {JWT_EXPIRES_IN, JWT_SECRET, JWT_COOKIE_EXPIRES_IN, NODE_ENV, SAME_SITE} = process.env
 
 const signToken = (id) => {
     return jwt.sign({ id: id }, JWT_SECRET, {
@@ -25,7 +25,7 @@ const createAndSendToken = (user, statusCode, res) => {
     const cookieOptions = {
         expires: new Date(Date.now() + parseInt(JWT_COOKIE_EXPIRES_IN, 10) * 24 * 60 * 60 * 1000), // Ensure JWT_COOKIE_EXPIRES_IN is a number
         httpOnly: true, // Prevents JavaScript from accessing the cookie
-        sameSite : "None", //
+        sameSite : SAME_SITE, //
     };
 
     
@@ -154,7 +154,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     
     //if the user does not exist, return an error message
     if (!user) {
-        return next(new AppError('User does not exist', 400))
+        return next(new AppError('User does not exist', 400)) 
     }
 
     //generate reset token by calling the createResetToken function defined in the userModel
@@ -349,16 +349,18 @@ exports.changePassword = catchAsync(async (req, res, next) => {
 
     await user.save();
 
-    const newSigninToken = signToken(user._id);
+    // const newSigninToken = signToken(user._id);
 
-    res.status(200).json({
-        status: "success",
-        message: "password change successful",
-        token: newSigninToken,
-        data: {
-            user
-        }
-    })
+    createAndSendToken(user, 200, res)
+
+    // res.status(200).json({
+    //     status: "success",
+    //     message: "password change successful",
+    //     token: newSigninToken,
+    //     data: {
+    //         user
+    //     }
+    // })
 
 })
 
