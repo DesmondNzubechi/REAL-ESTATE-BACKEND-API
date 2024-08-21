@@ -6,7 +6,7 @@ const sendEmail = require("../utils/sendEmail");
 const crypto = require('crypto');
 const {promisify} = require('util')
 
-
+//ENVIRONMENTAL VARIABLES
 const {JWT_EXPIRES_IN, JWT_SECRET, JWT_COOKIE_EXPIRES_IN, NODE_ENV, SAME_SITE} = process.env
 
 const signToken = (id) => {
@@ -27,7 +27,6 @@ const createAndSendToken = (user, statusCode, res) => {
         httpOnly: true, // Prevents JavaScript from accessing the cookie
         sameSite : SAME_SITE, //
     };
-
     
 
     // In production, make sure the cookie is only sent over HTTPS
@@ -49,6 +48,7 @@ const createAndSendToken = (user, statusCode, res) => {
         },
     });
 };
+
 
 
 exports.signUpNewUser = catchAsync(async (req, res, next) => {
@@ -232,15 +232,18 @@ exports.restrictTo = (...role) => {
 } 
 
 
+//FETCH AUNTHENTICATED USER INFORMATION
 exports.getMe = catchAsync(async (req, res, next) => {
+
+    //get token from cookie
     const token = req.cookies.jwt;
 
-    console.log(token, "token");
-
+//check if token exist, if not return error message.
     if (!token) {
         return next(new AppError("You are not authorized to access this route", 401));
     }
 
+    //verify the token
     let decoded;
     try {
         decoded = await promisify(jwt.verify)(token, JWT_SECRET);
@@ -248,18 +251,21 @@ exports.getMe = catchAsync(async (req, res, next) => {
     } catch (error) {
         return next(new AppError("Token verification failed", 400));
     }
-
+//find the user, using the id attached to the token
     const user = await User.findById(decoded.id);
     console.log('User found:', user);
 
+    //check if the user exist, if not return an error message
     if (!user) {
         return next(new AppError("User not found", 404));
     }
 
+    //check if the password was changed recently, if it was changed then return an error message telling the user to login again
     if (user.changePasswordAfter(decoded.iat)) {
         return next(new AppError("User recently changed password, kindly login again", 400));
     }
 
+    //if everything is successful, return a success response with the user data.
     res.status(200).json({
         status: "success",
         data: {
@@ -320,6 +326,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
 
 
+//CHANGE PASSWORD
 exports.changePassword = catchAsync(async (req, res, next) => {
     const { currentPassword, password, confirmPassword } = req.body;
     
@@ -400,19 +407,28 @@ exports.verifyTheUserEmail = catchAsync(async (req, res, next) => {
 
 })
 
-
 exports.logoutUser = catchAsync(async (req, res, next) => {
     const cookieOptions = {
-        expiresIn: Date(Date.now() + 5 * 1000),
-        httpOnly: true,
-        secure: NODE_ENV === "production" && true,
+        expires: new Date(Date.now() + 1 * 1000), // Expire in a second
+        httpOnly: true, // Prevents client-side scripts from accessing the cookie
+        sameSite : SAME_SITE
     };
 
+    if (process.env.NODE_ENV === 'production') {
+        cookieOptions.secure = true; // Cookies should only be sent over HTTPS
+    }
+
+    // Set the JWT to a dummy value and expire the cookie immediately
     res.cookie("jwt", "logged out", cookieOptions);
 
     res.status(200).json({
         status: "success",
-        message : "logout successful"
-    })
+        message: "Logout successful"
+    });
+});
 
-})
+
+
+
+
+

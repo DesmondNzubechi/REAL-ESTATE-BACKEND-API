@@ -22,7 +22,7 @@ app.use(express.json())
 
 app.use(express.urlencoded({ extended: true }));
 
- 
+  
 // app.use(cors({
 //     origin: process.env.originUrl,
 //     credentials: true
@@ -30,14 +30,13 @@ app.use(express.urlencoded({ extended: true }));
 
 const corsOptions = {
     origin: process.env.originUrl,
-    methods: 'GET,POST,PUT,DELETE,PATCH',
+    methods: 'GET,POST,DELETE,PATCH',
     allowedHeaders: 'Content-Type, Authorization',
     credentials: true,
   };
   
   app.use(cors(corsOptions));
   
-  // Handle preflight requests
   app.options('*', cors(corsOptions));
 
 

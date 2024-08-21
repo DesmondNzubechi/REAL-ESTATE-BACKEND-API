@@ -8,16 +8,16 @@ const { Schema } = mongoose;
 const userSchema = new Schema({
     firstName: {
         type: String,
-        required: [true, "Kindly input your first name"]
+        required: [true, "Kindly input your first name"],
+        minLength : 2,
     },
     lastName: {
         type: String,
-        required: [true, "Kindly input your last name"]
+        required: [true, "Kindly input your last name"],
+        minLength : 2,
     },
     userName: {
         type: String,
-        required: [true, "Kindly input your username"],
-        unique: [true, "This username already exists."]
     },
     email: {
         type: String,
@@ -46,15 +46,15 @@ const userSchema = new Schema({
     },
     phoneNumber: {
         type: Number,
-        required: [true, "Please insert your phone number"]
+       default: 0
     },
     country: {
         type: String,
-        required: [true, "Please input your country name"]
+        default: ''
     },
     state: {
         type: String,
-        required: [true, "Kindly input your state"]
+       default: ''
     },
     role: { 
         type: String,
