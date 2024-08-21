@@ -148,7 +148,7 @@ exports.loginUser = catchAsync(async (req, res, next) => {
 exports.forgotPassword = catchAsync(async (req, res, next) => {
 //destructure user email from the body
     const { email } = req.body;
-
+ 
     //find user using the provided email
     const user = await User.findOne({ email });
     
@@ -165,7 +165,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     await user.save({ validateBeforeSave: false });
 
     //
-    const resetUrl = `${req.protocol}://${req.get("host")}/api/v1/user/resetPassword/${resetToken}`;
+    const resetUrl = `${process.env.originUrl}/reset-password/${resetToken}`;
     const message = `forgot your passowrd? kindly submit your new password to ${resetUrl}. if you did not request for this kindly ignore.`
 
     try {
