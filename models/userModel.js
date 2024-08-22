@@ -18,6 +18,7 @@ const userSchema = new Schema({
     },
     userName: {
         type: String,
+        default : 'Update username'
     },
     email: {
         type: String,
@@ -46,11 +47,11 @@ const userSchema = new Schema({
     },
     phoneNumber: {
         type: Number,
-       default: 0
+       default: 'update phone no'
     },
     country: {
         type: String,
-        default: ''
+        default: 'update country'
     },
     state: {
         type: String,

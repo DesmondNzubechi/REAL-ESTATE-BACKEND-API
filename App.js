@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 // app.use(cors({
 //     origin: process.env.originUrl,
 //     credentials: true
-// }))
+// })) 
 
 const corsOptions = {
     origin: process.env.originUrl,

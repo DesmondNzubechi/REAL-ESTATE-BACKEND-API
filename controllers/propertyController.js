@@ -39,7 +39,7 @@ exports.createProperty = catchAsync(async (req, res, next) => {
                 newProperty 
             }
         });
-});
+});  
 
 //FETCHING ALL THE PROPERTY DOCUMENT FROM DATABASE
 exports.getAllProperty = catchAsync(async(req, res, next) => {

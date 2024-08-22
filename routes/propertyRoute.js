@@ -7,7 +7,7 @@ const express = require('express');
 const router = express.Router();
 
 router.
-    route('/createProperty')
+    route('/createProperty') 
     .post(uploadPhoto, uploadImageToCloudinary,  createProperty);
      
     router.get("/", getAllProperty)

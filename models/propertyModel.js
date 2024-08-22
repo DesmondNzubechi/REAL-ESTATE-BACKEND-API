@@ -51,7 +51,7 @@ const propertySchema = new Schema({
         type: mongoose.Schema.ObjectId,
         ref: "Review"
         }
-    ]
+    ] 
 })
 
 
