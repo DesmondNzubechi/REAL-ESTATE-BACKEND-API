@@ -51,7 +51,7 @@ exports.getABlogPost = catchAsync(async (req, res, next) => {
     
     const { id } = req.params;
 
-    const blogPost = await Blog.findById(id);
+    const blogPost = await Blog.findById(id).populate('comments');
 
 
     if (!blogPost) {

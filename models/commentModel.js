@@ -10,7 +10,6 @@ const commentSchema = new Schema({
     user: {
         type: Schema.ObjectId,
         ref: "User",
-        required: [true, 'comment must belong to a user']
     },
     username: {
         type: String,

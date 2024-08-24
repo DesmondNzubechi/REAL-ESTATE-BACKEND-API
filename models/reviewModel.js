@@ -12,7 +12,6 @@ const reviewSchema = new Schema({
     user: {
         type: Schema.ObjectId,
         ref: "User",
-        required: [true, "review must belong to a user"]
     }, 
     rating: { 
         type: Number,
@@ -28,6 +27,10 @@ const reviewSchema = new Schema({
         type: mongoose.Schema.ObjectId,
         ref: "Property",
         required: [true, "review must belong to a property"]
+    },
+    reviewerName: {
+        type: String,
+        required: [true, "Reviewer must have a name"]
     }
 })
 

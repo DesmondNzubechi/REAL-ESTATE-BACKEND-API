@@ -82,7 +82,7 @@ exports.updateProperty = catchAsync(async (req, res, next) => {
 
 //FETCHING A SINGLE PROPERTY DOCUMENT FROM THE DATABASE USING ITS ID
 exports.getAProperty = catchAsync(async (req, res, next) => {
-    const property = await Property.findById(req.params.id);
+    const property = await Property.findById(req.params.id).populate("reviews");
 
     //success response
     res.status(200).json({

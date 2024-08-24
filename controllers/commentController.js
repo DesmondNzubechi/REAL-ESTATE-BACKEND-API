@@ -9,7 +9,7 @@ const catchAsync = require("../utils/catchAsync");
 exports.createComment = catchAsync(async (req, res, next) => {
 
     const { comment, user, blog, username } = req.body;
-
+ 
     const findUser = await User.findById(user);
     const findBlog = await Blog.findById(blog);
 
