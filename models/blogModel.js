@@ -21,13 +21,21 @@ const blogSchema = new Schema({
     comments: [
         {
             type: Schema.ObjectId,
-            ref: "Comments"
+            ref: "Comment"
         }
-    ],
+    ], 
     status: {
         type: String,
         enum: ["published", "unpublished"],
         default: 'unpublished'
+    },
+    date: {
+        type: Date,
+        default : Date.now
+    },
+    tag: {
+        type: String,
+        default: "News"
     }
 })
 

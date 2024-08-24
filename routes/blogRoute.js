@@ -8,7 +8,7 @@ const router = express.Router();
 router
     .route("/createBlogPost")
     .post(uploadPhoto, uploadImageToCloudinary, createBlogPost)
-
+ 
     router
     .route("/getAllBlogPost")
     .get(getAllBlogPost)

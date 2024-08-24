@@ -13,8 +13,8 @@ const reviewSchema = new Schema({
         type: Schema.ObjectId,
         ref: "User",
         required: [true, "review must belong to a user"]
-    },
-    rating: {
+    }, 
+    rating: { 
         type: Number,
         min: 1.5,
         max: 5.0,

@@ -36,7 +36,7 @@ exports.createAReview = catchAsync(async (req, res, next) => {
     } catch (err) {
         return next(new AppError('Failed to log activity', 500));
     }
-
+ 
 
     res.status(201).json({
         status: "success",

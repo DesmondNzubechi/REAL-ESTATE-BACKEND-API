@@ -8,20 +8,20 @@ const catchAsync = require("../utils/catchAsync");
 
 exports.createComment = catchAsync(async (req, res, next) => {
 
-    const { comment, user, blog } = req.body;
+    const { comment, user, blog, username } = req.body;
 
     const findUser = await User.findById(user);
     const findBlog = await Blog.findById(blog);
 
-    if (!findUser) {
-        return next(new AppError("This user does not exist, try login before commenting", 404))
-    }
+    // if (!findUser) {
+    //     return next(new AppError("This user does not exist, try login before commenting", 404))
+    // }
 
     if (!findBlog) {
         return next(new AppError("Blog post does not exist", 404))
     }
 
-    if (!comment || !user || !blog) {
+    if (!comment || !blog || !username) {
     return next(new AppError("Please fill in the required field", 400))
 }
     
@@ -29,7 +29,8 @@ exports.createComment = catchAsync(async (req, res, next) => {
     const theComment = await Comment.create({
         comment,
         user,
-        blog
+        blog,
+        username
     })
 
     findBlog.comments.push(theComment._id);

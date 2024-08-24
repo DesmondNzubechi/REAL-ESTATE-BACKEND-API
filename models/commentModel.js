@@ -12,6 +12,10 @@ const commentSchema = new Schema({
         ref: "User",
         required: [true, 'comment must belong to a user']
     },
+    username: {
+        type: String,
+        required : [true, "please provide username"]
+    },
     blog: {
         type: Schema.ObjectId,
         ref: "Blog", 
