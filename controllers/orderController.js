@@ -64,13 +64,13 @@ exports.getAllOrderByAUser = catchAsync(async (req, res, next) => {
 
     console.log('Orders:', orders); // Log the fetched orders
 
-    if (!orders || orders.length === 0) {
-        return next(new AppError('No orders found for this user', 404));
-    }
+    // if (!orders || orders.length === 0) {
+    //     return next(new AppError('No orders found for this user', 404));
+    // }
  
-    if (!findAUser) {
-        return next(new AppError('User not found', 404));
-    }
+    // if (!findAUser) {
+    //     return next(new AppError('User not found', 404));
+    // }
 
 
 
