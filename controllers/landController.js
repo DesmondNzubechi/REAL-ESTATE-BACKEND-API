@@ -7,9 +7,9 @@ const Land = require("../models/landModel");
 const catchAsync = require('../utils/catchAsync');
 
 exports.createLand = catchAsync(async (req, res, next) => {
-    const { name, location, map, description} = req.body
+    const { name, location, map, description, price} = req.body
     
-    if (!name || !location || !map || description) {
+    if (!name || !location || !map || !description || !price) {
      return next(new AppError("Kindly input all the field", 400))  
     }
 
@@ -23,8 +23,9 @@ exports.createLand = catchAsync(async (req, res, next) => {
         name,
         location,
         map,
-        images,
-        description
+        images : [images],
+        description,
+        price
     })
 
     res.status(201).json({

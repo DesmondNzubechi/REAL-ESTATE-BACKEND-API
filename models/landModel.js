@@ -23,10 +23,18 @@ const landSchema = new Schema({
         required: [true, "Please provide the description of the land."]
     },
     images: {
-        type: String,
+        type: [String],
         required: [true, "Image is required"]
-    } 
-})
+    },
+    date: {
+        type: Date,
+        default: Date.now()
+    },
+    price: {
+        type: Number,
+        required : [true, 'please provide price']
+    }
+}) 
  
 const Land = mongoose.model("land", landSchema);
 

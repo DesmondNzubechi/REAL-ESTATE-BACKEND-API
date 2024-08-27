@@ -8,17 +8,18 @@ const { logActivitiesController } = require('./activitiesController');
 
 
 exports.createAReview = catchAsync(async (req, res, next) => {
-    const { review, property, rating, user } = req.body;
+    const { review, property, rating, user, reviewerName } = req.body;
 
-    if (!review || !property) {
+    if (!review || !property || !reviewerName) {
         return next(new AppError("fields are required", 404))
     }
-
+ 
     const theReview = await Review.create({
         review,
         rating,
         property,
-        user
+        user, 
+        reviewerName
     }) 
 
     const theProperty = await Property.findById(property);
@@ -26,16 +27,20 @@ exports.createAReview = catchAsync(async (req, res, next) => {
     theProperty.reviews.push(theReview._id);
 
     await theProperty.save();
-
-    try {
-        logActivitiesController(
-            user, // Pass the user ID directly
-            property, // property id
-            'added_review', // Activity type
-        );
-    } catch (err) {
-        return next(new AppError('Failed to log activity', 500));
+    
+    if (user) {
+        try {
+            logActivitiesController(
+                user, // Pass the user ID directly
+                property, // property id
+                'added_review', // Activity type
+            );
+        } catch (err) {
+            return next(new AppError('Failed to log activity', 500));
+        }  
     }
+
+   
  
 
     res.status(201).json({
