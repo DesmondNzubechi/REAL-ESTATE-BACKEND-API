@@ -12,27 +12,29 @@ exports.createOrder = catchAsync(async (req, res, next) => {
         return next(new AppError('Property and user are required', 400));
     }
 
+    const theUser = await User.findById(user);
+
+    if (!theUser) {
+        return next(new AppError("User does not exist", 401)) 
+    }
+
     const order = await Order.create({
         property, 
         user
     });
 
-    const theUser = await User.findById(theOrder.user);
+   
+  
+    const username = `${theUser.firstName} ${theUser.lastName}`;
 
-    if (!theUser) {
-        return next(new AppError("User does not exist", 401))
-    }
-
-    const username = `${user.firstName} ${user.lastName}`;
-
-    const orderUrl = `${req.protocol}://${req.get("host")}/api/v1/order/getAnOrder/${order._id}`;
+    const orderUrl = `${process.env.originUrl}/my-order/${order._id}`;
     const message = `Your order for a property was successful. Kindly take a look at the order here: ${orderUrl}`
 
-    sendEmail({
+    sendEmail({ 
         subject: "Your property Order was successful",
         message,
-        email: user.email,
-        name: username
+        email: theUser.email,
+        name: username 
     })
 
     try {
@@ -53,7 +55,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
         }
     });
 });
-
+ 
 
 exports.getAllOrderByAUser = catchAsync(async (req, res, next) => {
     const { userId } = req.params;
@@ -149,7 +151,7 @@ exports.approveOrder = catchAsync(async (req, res, next) => {
     } catch (err) {
         return next(new AppError('Failed to log activity', 500));
     }
- 
+  
      //if successful return a success response
      res.status(200).json({
          status: 'success',

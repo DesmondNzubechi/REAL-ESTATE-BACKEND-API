@@ -14,11 +14,11 @@ const orderSchema = new Schema({
         required: [true, "Order must belong to a user"]
     },
     status: {
-        type: String,
+        type: String, 
         enum: ['pending', 'approved', 'rejected', 'confirmed', "cancelled"],
         default: 'pending'
     },
-    orderDate: {
+    orderDate: { 
         type: Date,
         default: Date.now()
     }
