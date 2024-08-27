@@ -10,7 +10,7 @@ const activitiesSchema = new Schema({
     },
     property: {
         type: Schema.ObjectId,
-        ref: "Property"
+        ref: "properties"
     },
     activityType: {
         type: String,

@@ -30,3 +30,19 @@ activities: AllActivities
         }
     })
 })
+
+exports.getUserActivities = catchAsync(async (req, res, next) => {
+    
+    const { user } = req.params;
+ 
+    const userActivities = await Activity.findOne({ user }).populate("property");
+
+    res.status(200).json({
+        status: "success",
+        message: "user activities successfully fetched",
+        data: {
+            activities : userActivities
+        }
+    })
+
+})
