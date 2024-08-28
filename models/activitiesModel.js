@@ -10,11 +10,11 @@ const activitiesSchema = new Schema({
     },
     property: {
         type: Schema.ObjectId,
-        ref: "properties"
-    },
+        ref: "properties" || "Blog"
+    }, 
     activityType: {
         type: String,
-        enum: ['order_canceled', 'order_approved', 'order_rejected', 'order_completed', 'order_placed', 'added_review'],
+        enum: ['order_canceled', 'order_approved', 'order_rejected', 'order_completed', 'order_placed', 'added_review', 'added_comment'],
         required: [true, "Activity must have a type"]
     },
     timestamp: {

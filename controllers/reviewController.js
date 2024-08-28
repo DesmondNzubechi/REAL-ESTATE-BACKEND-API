@@ -17,7 +17,7 @@ exports.createAReview = catchAsync(async (req, res, next) => {
     const theReview = await Review.create({
         review,
         rating,
-        property,
+        property, 
         user, 
         reviewerName
     }) 
@@ -28,7 +28,7 @@ exports.createAReview = catchAsync(async (req, res, next) => {
 
     await theProperty.save();
     
-    if (user) {
+    if (user) { 
         try {
             logActivitiesController(
                 user, // Pass the user ID directly

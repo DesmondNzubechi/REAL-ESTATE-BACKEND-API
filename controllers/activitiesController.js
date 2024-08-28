@@ -8,7 +8,7 @@ exports.logActivitiesController = catchAsync(async (user, property, activityType
        property,
         activityType,
     };
-
+ 
 
     try {
         const newActivity = await Activity.create(activityData);
@@ -35,11 +35,12 @@ exports.getUserActivities = catchAsync(async (req, res, next) => {
     
     const { user } = req.params;
  
-    const userActivities = await Activity.findOne({ user }).populate("property");
+    const userActivities = await Activity.find({ user }).populate("property");
 
     res.status(200).json({
         status: "success",
         message: "user activities successfully fetched",
+        length: userActivities.length,
         data: {
             activities : userActivities
         }

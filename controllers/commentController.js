@@ -3,6 +3,7 @@ const Blog = require("../models/blogModel");
 const Comment = require("../models/commentModel");
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
+const { logActivitiesController } = require("./activitiesController");
 
 
 
@@ -12,10 +13,10 @@ exports.createComment = catchAsync(async (req, res, next) => {
  
     const findUser = await User.findById(user);
     const findBlog = await Blog.findById(blog);
-
+ 
     // if (!findUser) {
     //     return next(new AppError("This user does not exist, try login before commenting", 404))
-    // }
+    // } 
 
     if (!findBlog) {
         return next(new AppError("Blog post does not exist", 404))
@@ -35,6 +36,20 @@ exports.createComment = catchAsync(async (req, res, next) => {
 
     findBlog.comments.push(theComment._id);
     await findBlog.save();
+
+    if (findUser) {
+        try {
+            logActivitiesController(
+                user, // Pass the user ID directly
+                blog, // Use order._id for relatedId
+                'added_comment', // Activity type
+            );
+        } catch (err) {
+            return next(new AppError('Failed to log activity', 500));
+        }
+    }
+    
+
 
 
     res.status(201).json({
