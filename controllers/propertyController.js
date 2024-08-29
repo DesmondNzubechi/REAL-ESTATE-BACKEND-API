@@ -10,10 +10,10 @@ exports.createProperty = catchAsync(async (req, res, next) => {
 
 
     //DESTRUCTURE THE FIELD FROM REQUEST BODY
-    const { status, name, price, map, location, amenities, exteriorFeatures, description, developmentStatus, yearBuilt, bedroom, bathroom, garadge } = req.body;
+    const { status, name, price, map, type, location, amenities, exteriorFeatures, description, developmentStatus, yearBuilt, bedroom, bathroom, garadge } = req.body;
 
     //This are for the required field, if the field is empty while trying to create a property then return an error message
-    if (!name || !price || !status || !map || !location || !yearBuilt || !bedroom || !bathroom || !garadge) {
+    if (!name || !price || !status || !map || !type || !location || !yearBuilt || !bedroom || !bathroom || !garadge) {
         return next(new AppError("all field are required", 400))
     } 
 
@@ -33,7 +33,8 @@ exports.createProperty = catchAsync(async (req, res, next) => {
             bedroom,
             bathroom,
             garadge,
-            status
+            status, 
+            type
         });  
 
     //if successful returns a success message with the data of the new property

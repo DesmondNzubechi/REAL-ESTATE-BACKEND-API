@@ -71,6 +71,10 @@ const propertySchema = new Schema({
     yearBuilt: { 
         type: String,
         required: [true, "Please provide year the house was built"]
+    },
+    type: {
+        type: String,
+        required : [true, "input property type"]
     }
 })
 
