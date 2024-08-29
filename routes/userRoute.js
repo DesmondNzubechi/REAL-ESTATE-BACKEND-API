@@ -40,7 +40,7 @@ router
     router
     .route('/updateProfilePic/:id')
     .patch(protectedRoute, uploadPhoto, uploadImageToCloudinary, updateProfilePicture)
-
+ 
     router
     .route('/deleteAUser')
     .patch(protectedRoute, deleteAUser)

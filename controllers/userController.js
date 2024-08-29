@@ -85,16 +85,17 @@ exports.createAUser = catchAsync(async (req, res, next) => {
             theNewUser
         }
     })
-
-})
  
+})
+  
+
 exports.updateProfilePicture = catchAsync(async (req, res, next) => {
     const { id } = req.params
 
     if (!req.file || !req.file.cloudinaryUrl) {
         return next(new AppError("kindly select file to be uploaded", 400))
     }
-
+ 
     const updateProfilePic = await User.findByIdAndUpdate(id, { images: req.file.cloudinaryUrl }, {
         new: true,
         runValidators: true,
@@ -112,6 +113,7 @@ exports.updateProfilePicture = catchAsync(async (req, res, next) => {
     })
  
 })
+
 exports.updateMe = catchAsync(async (req, res, next) => {
     const { id } = req.params;
     const userUpdateInfo = req.body;

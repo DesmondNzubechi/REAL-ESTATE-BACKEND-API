@@ -51,7 +51,27 @@ const propertySchema = new Schema({
         type: mongoose.Schema.ObjectId,
         ref: "Review"
         }
-    ] 
+    ],
+    bathroom: {
+        type: Number,
+        required : [true, "Please add how many bathroom  is in the house"]
+    },
+    bedroom: {
+        type: Number,
+        required : [true, "Please add how many bedroom  is in the house"]
+    },
+    status: {
+        type: String,
+        required : [true, "Please add the status of the house"]
+    },
+    garadge: {
+        type: Number,
+        required : [true, "Please add how many parking space is in the house"]
+    },
+    yearBuilt: { 
+        type: String,
+        required: [true, "Please provide year the house was built"]
+    }
 })
 
 
