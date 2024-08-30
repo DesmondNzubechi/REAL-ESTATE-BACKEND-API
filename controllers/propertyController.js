@@ -14,7 +14,7 @@ exports.createProperty = catchAsync(async (req, res, next) => {
 
     //This are for the required field, if the field is empty while trying to create a property then return an error message
     if (!name || !price || !status || !map || !type || !location || !yearBuilt || !bedroom || !bathroom || !garadge) {
-        return next(new AppError("all field are required", 400))
+        return next(new AppError("Please fill in the required field", 400))
     } 
 
     const imageUrl = req.file ? req.file.cloudinaryUrl : null;
