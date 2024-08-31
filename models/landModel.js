@@ -25,7 +25,7 @@ const landSchema = new Schema({
     images: {
         type: [String],
         required: [true, "Image is required"]
-    },
+    }, 
     date: {
         type: Date,
         default: Date.now()

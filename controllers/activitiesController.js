@@ -37,12 +37,14 @@ exports.getUserActivities = catchAsync(async (req, res, next) => {
  
     const userActivities = await Activity.find({ user }).populate("property");
 
+    const filterActivity = userActivities.filter(activity => activity.property !== null)
+
     res.status(200).json({
         status: "success",
         message: "user activities successfully fetched",
         length: userActivities.length,
         data: {
-            activities : userActivities
+            activities : filterActivity
         }
     })
 

@@ -62,6 +62,8 @@ exports.getAllOrderByAUser = catchAsync(async (req, res, next) => {
 
     const orders = await Order.find({ user: userId }).populate("property");
 
+
+    const filterOrder = orders.filter(order => order.property !== null)
     console.log('Orders:', orders); // Log the fetched orders
 
     // if (!orders || orders.length === 0) {
@@ -78,7 +80,7 @@ exports.getAllOrderByAUser = catchAsync(async (req, res, next) => {
         status: "success",
         message: "orders successfully fetched",
         data: {
-            orders
+            orders : filterOrder
         }
     })
 })
@@ -114,12 +116,14 @@ exports.getAllOrder = catchAsync(async (req, res, next) => {
     
     const allOrder = await Order.find().populate("property").populate("user");
 
+    const filterOrder = allOrder.filter(orders => orders.property !== null && orders.user !== null)
+
     res.status(200).json({
         status: "success",
         length: allOrder.length,
         message: "order successfully fetched",
         data: {
-            allOrder
+            allOrder : filterOrder
         }
     })
 })
