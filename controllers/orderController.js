@@ -155,7 +155,7 @@ exports.getAllOrderByAUser = catchAsync(async (req, res, next) => {
         }
     })
 })
-
+ 
 
 
 exports.getOrder = catchAsync(async (req, res, next) => {
@@ -166,10 +166,6 @@ exports.getOrder = catchAsync(async (req, res, next) => {
 
     if (!orderedProperty) {
         return next(new AppError("Property does not exist", 404));
-    }
-
-    if (!findAUser) {
-        return next(new AppError('User not found', 404));
     }
 
 
