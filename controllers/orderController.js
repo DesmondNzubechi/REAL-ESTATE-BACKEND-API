@@ -3,50 +3,120 @@ const Order = require("../models/orderModel");
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const sendEmail = require("../utils/sendEmail");
-const { logActivitiesController } = require("./activitiesController");
+const { propertyActivitiesController } = require("./activitiesController");
+const jwt = require('jsonwebtoken');
+const { promisify } = require("util");
 
+
+// exports.createOrder = catchAsync(async (req, res, next) => {
+//     const { property } = req.body;
+
+//     const userToken = req.cookies.jwt;
+
+//     let theUserId;
+
+//     if (userToken) {
+//         theUserId = await promisify(jwt.verify)(userToken, process.env.JWT_SECRET);
+//     }
+
+//     if (!property || !theUserId) {
+//         return next(new AppError('Property and user are required', 400));
+//     }
+
+//     const theUser = await User.findById(theUserId);
+
+//     if (!theUser) {
+//         return next(new AppError("User does not exist", 401))
+//     }
+
+//     const order = await Order.create({
+//         property,
+//         user : theUserId.id
+//     });
+
+   
+  
+//     const username = `${theUser.firstName} ${theUser.lastName}`;
+
+//     const orderUrl = `${process.env.originUrl}/my-order/${order._id}`;
+//     const message = `Your order for a property was successful. Kindly take a look at the order here: ${orderUrl}`
+
+//     sendEmail({
+//         subject: "Your property Order was successful",
+//         message,
+//         email: theUser.email,
+//         name: username
+//     })
+
+//     try {
+//         logActivitiesController(
+//             user, // Pass the user ID directly
+//             property, // Use order._id for relatedId
+//             'order_placed', // Activity type
+//             'properties'
+//         );
+//     } catch (err) {
+//         return next(new AppError('Failed to log activity', 500));
+//     }
+
+//     res.status(201).json({
+//         status: "success",
+//         message: "Order successful",
+//         data: {
+//             order
+//         }
+//     });
+// });
 exports.createOrder = catchAsync(async (req, res, next) => {
-    const { property, user } = req.body;
+    const { property } = req.body;
 
-    if (!property || !user) {
+    const userToken = req.cookies.jwt;
+
+    let theUserId;
+
+    if (userToken) {
+        const decodedToken = await promisify(jwt.verify)(userToken, process.env.JWT_SECRET);
+        theUserId = decodedToken.id; // Extract the `id` from the decoded token
+    }
+    console.log("user id", theUserId)
+    
+    if (!property || !theUserId) {
         return next(new AppError('Property and user are required', 400));
     }
-
-    const theUser = await User.findById(user);
+ 
+    const theUser = await User.findById(theUserId);
 
     if (!theUser) {
-        return next(new AppError("User does not exist", 401)) 
+        return next(new AppError("User does not exist", 401));
     }
 
     const order = await Order.create({
         property, 
-        user
+        user: theUserId // Corrected the user ID assignment
     });
 
-   
-  
     const username = `${theUser.firstName} ${theUser.lastName}`;
 
     const orderUrl = `${process.env.originUrl}/my-order/${order._id}`;
-    const message = `Your order for a property was successful. Kindly take a look at the order here: ${orderUrl}`
+    const message = `Your order for a property was successful. Kindly take a look at the order here: ${orderUrl}`;
 
     sendEmail({ 
         subject: "Your property Order was successful",
         message,
         email: theUser.email,
         name: username 
-    })
+    }); 
 
     try {
-        logActivitiesController(
-            user, // Pass the user ID directly
-            property, // Use order._id for relatedId
+      propertyActivitiesController(
+            theUserId, // Pass the user ID directly
+            property,  // Pass the property ID
             'order_placed', // Activity type
         );
     } catch (err) {
         return next(new AppError('Failed to log activity', 500));
     }
-
+ 
     res.status(201).json({
         status: "success",
         message: "Order successful",
@@ -55,6 +125,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
         }
     });
 });
+
  
 
 exports.getAllOrderByAUser = catchAsync(async (req, res, next) => {

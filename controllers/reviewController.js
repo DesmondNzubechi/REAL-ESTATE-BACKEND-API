@@ -4,11 +4,25 @@ const Review = require('../models/reviewModel');
 const Property = require('../models/propertyModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../errors/appError');
-const { logActivitiesController } = require('./activitiesController');
-
+const {promisify} = require('util')
+const { propertyActivitiesController } = require('./activitiesController');
+const jwt = require('jsonwebtoken');
+const User = require('../models/userModel');
 
 exports.createAReview = catchAsync(async (req, res, next) => {
-    const { review, property, rating, user, reviewerName } = req.body;
+    const { review, property, reviewerName } = req.body;
+
+    const userToken = req.cookies.jwt;
+ 
+    let theUserId;
+    if (userToken) {
+        const decodedToken = await promisify(jwt.verify)(userToken, process.env.JWT_SECRET);
+        theUserId = decodedToken.id;
+    }
+
+
+    console.log("user id", theUserId)
+
 
     if (!review || !property || !reviewerName) {
         return next(new AppError("fields are required", 404))
@@ -16,9 +30,8 @@ exports.createAReview = catchAsync(async (req, res, next) => {
  
     const theReview = await Review.create({
         review,
-        rating,
         property, 
-        user, 
+        user : theUserId, 
         reviewerName
     }) 
 
@@ -28,10 +41,10 @@ exports.createAReview = catchAsync(async (req, res, next) => {
 
     await theProperty.save();
     
-    if (user) { 
+    if (userToken) { 
         try {
-            logActivitiesController(
-                user, // Pass the user ID directly
+            propertyActivitiesController(
+               theUserId, // Pass the user ID directly
                 property, // property id
                 'added_review', // Activity type
             );

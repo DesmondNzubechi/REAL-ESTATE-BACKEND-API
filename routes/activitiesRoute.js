@@ -1,5 +1,5 @@
 const express = require("express");
-const { getAllActivities, getUserActivities } = require("../controllers/activitiesController");
+const { getAllActivities, getUserPropertyActivities, deleteAllTheactivities, getUserBlogActivities } = require("../controllers/activitiesController");
 const { protectedRoute } = require("../controllers/authController");
 
 const router = express.Router();
@@ -11,7 +11,12 @@ router
     .get(getAllActivities)
 
 router
-    .route('/getUserActivities/:user')
-    .get(getUserActivities)
+    .route('/getUserPropertyActivities/:user')
+    .get(getUserPropertyActivities)
 
+    router
+    .route('/getUserBlogActivities/:user')
+    .get(getUserBlogActivities)
+ 
+    router.delete('/deleteAllActivities', deleteAllTheactivities)
 module.exports = router;

@@ -3,46 +3,51 @@ const Blog = require("../models/blogModel");
 const Comment = require("../models/commentModel");
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
-const { logActivitiesController } = require("./activitiesController");
-
+const { blogActivitiesController } = require("./activitiesController");
+const { promisify } = require('util');
+const jwt = require("jsonwebtoken");
 
 
 exports.createComment = catchAsync(async (req, res, next) => {
 
-    const { comment, user, blog, username } = req.body;
+    const { comment, blog, username } = req.body;
  
-    const findUser = await User.findById(user);
     const findBlog = await Blog.findById(blog);
- 
-    // if (!findUser) {
-    //     return next(new AppError("This user does not exist, try login before commenting", 404))
-    // } 
 
+    
     if (!findBlog) {
         return next(new AppError("Blog post does not exist", 404))
     }
 
     if (!comment || !blog || !username) {
     return next(new AppError("Please fill in the required field", 400))
-}
-    
+    }
+
+    const userToken = req.cookies.jwt;
+
+    let theUserId;
+
+    if (userToken) {
+      const  decodedToken = await promisify(jwt.verify)(userToken, process.env.JWT_SECRET);
+        theUserId = decodedToken.id;
+    }
 
     const theComment = await Comment.create({
         comment,
-        user,
+        user : theUserId,
         blog,
-        username
+        username 
     })
 
     findBlog.comments.push(theComment._id);
     await findBlog.save();
 
-    if (findUser) {
+
+    if (theUserId) {
         try {
-            logActivitiesController(
-                user, // Pass the user ID directly
-                blog, // Use order._id for relatedId
-                'added_comment', // Activity type
+            blogActivitiesController(
+                theUserId, // Pass the user ID directly
+                blog, // blog id 
             );
         } catch (err) {
             return next(new AppError('Failed to log activity', 500));

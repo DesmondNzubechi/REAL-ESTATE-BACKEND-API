@@ -144,7 +144,7 @@ exports.loginUser = catchAsync(async (req, res, next) => {
 })
 
 
-
+ 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
 //destructure user email from the body
     const { email } = req.body;

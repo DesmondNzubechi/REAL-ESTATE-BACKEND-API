@@ -2,7 +2,6 @@ const AppError = require("../errors/appError");
 const Blog = require("../models/blogModel");
 const catchAsync = require("../utils/catchAsync");
 
-
 exports.createBlogPost = catchAsync(async (req, res, next) => {
     
     const { slug, title, content, theTag } = req.body;
