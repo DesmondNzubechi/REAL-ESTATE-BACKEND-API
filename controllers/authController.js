@@ -320,7 +320,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
         token : newSigninToken
 })
 
-    
+     
 })
 
 
@@ -359,15 +359,6 @@ exports.changePassword = catchAsync(async (req, res, next) => {
     // const newSigninToken = signToken(user._id);
 
     createAndSendToken(user, 200, res)
-
-    // res.status(200).json({
-    //     status: "success",
-    //     message: "password change successful",
-    //     token: newSigninToken,
-    //     data: {
-    //         user
-    //     }
-    // })
 
 })
 

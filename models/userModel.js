@@ -47,7 +47,7 @@ const userSchema = new Schema({
     },
     phoneNumber: {
         type: Number,
-       default: 'update phone no'
+       default: +234
     },
     country: {
         type: String,

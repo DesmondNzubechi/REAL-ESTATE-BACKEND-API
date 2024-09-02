@@ -7,7 +7,6 @@ const AppError = require('../errors/appError');
 const {promisify} = require('util')
 const { propertyActivitiesController } = require('./activitiesController');
 const jwt = require('jsonwebtoken');
-const User = require('../models/userModel');
 
 exports.createAReview = catchAsync(async (req, res, next) => {
     const { review, property, reviewerName } = req.body;
