@@ -12,7 +12,7 @@ const AppError = require("./errors/appError");
 const globalErrorHandler = require('./utils/errorController');
 const cookieParser = require("cookie-parser")
 const cors = require("cors");
-const app = express();
+const app = express(); 
 
 //implement cookie-parser
 app.use(cookieParser())
@@ -22,11 +22,7 @@ app.use(express.json())
 
 app.use(express.urlencoded({ extended: true }));
 
-  
-// app.use(cors({
-//     origin: process.env.originUrl,
-//     credentials: true
-// })) 
+   
 
 const corsOptions = {
     origin: process.env.originUrl,

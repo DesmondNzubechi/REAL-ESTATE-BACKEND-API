@@ -5,24 +5,29 @@ const { uploadPhoto, uploadImageToCloudinary } = require('../controllers/uploadC
 
 const router = express.Router();
 
+////ROUTE FOR SIGNING UP
 router
     .route('/signup')
     .post(signUpNewUser)
 
+    ////ROUTE FOR RESETING A PASSWORD
 router 
     .route('/resetPassword/:token')
     .patch(resetPassword)
 
+    ////ROUTE FOR FORGOT PASSWORD
 router
     .route('/forgotPassword')
     .post(forgotPassword)
 
+    ////ROUTE FOR LOGIN
 router
     .route("/login")
     .post(loginUser)
 
+    ////ROUTE FOR FETCHING ALL THE USER
 router
-    .route("/getAllUser")
+    .route("/getAllUser") 
     .get(getAllUser)
  
 router 

@@ -6,17 +6,23 @@ const {uploadImageToCloudinary, uploadPhoto} = require("../controllers/uploadCon
 const express = require('express');
 const router = express.Router();
 
+////ROUTE FOR CREATING A PROPERTY
 router.
     route('/createProperty') 
     .post(uploadPhoto, uploadImageToCloudinary,  createProperty);
      
+    ////ROUTE FOR FETCHING ALL PROPERTIES
     router.get("/", getAllProperty)
 
-    router.patch("/updateAProperty/:id", updateProperty)
+    ////ROUTE FOR  UPDATING A PROPERTY
+router.patch("/updateAProperty/:id", updateProperty)
+    
+////ROUTE FOR DELETING AND FETCHING A PROPERTY USING ITS ID
 router
     .route('/:id') 
     .delete(deleteAProperty)
     .get(getAProperty)
 
+    
 module.exports = router;
  
