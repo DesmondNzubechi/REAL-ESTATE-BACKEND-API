@@ -74,22 +74,27 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 
     let theUserId;
 
+    //IF THE JWT EXIST, THEN
     if (userToken) {
         const decodedToken = await promisify(jwt.verify)(userToken, process.env.JWT_SECRET);
         theUserId = decodedToken.id; // Extract the `id` from the decoded token
     }
     console.log("user id", theUserId)
     
+    //CHECK IF THE USER AND PROPERTY ID
     if (!property || !theUserId) {
         return next(new AppError('Property and user are required', 400));
     }
  
+    //FIND A USER USING HIS/HER ID
     const theUser = await User.findById(theUserId);
 
+    //RETURN ERROR MESSAGE IF USER DOES NOT EXIST
     if (!theUser) {
         return next(new AppError("User does not exist", 401));
     }
 
+    //CREATE THE ORDER USING THE PROPERTY AND THE USER ID
     const order = await Order.create({
         property, 
         user: theUserId // Corrected the user ID assignment
@@ -97,9 +102,11 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 
     const username = `${theUser.firstName} ${theUser.lastName}`;
 
+    //GET THE URL OF THE WEBSITE
     const orderUrl = `${process.env.originUrl}/my-order/${order._id}`;
     const message = `Your order for a property was successful. Kindly take a look at the order here: ${orderUrl}`;
 
+    //SEND MESSAGE TO THE USER'S EMAIL WHEN ORDERED A PROPERTY
     sendEmail({ 
         subject: "Your property Order was successful",
         message,
@@ -107,6 +114,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
         name: username 
     }); 
 
+    //LOG IT TO THE USER ACTIVITIES
     try {
       propertyActivitiesController(
             theUserId, // Pass the user ID directly
@@ -117,6 +125,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
         return next(new AppError('Failed to log activity', 500));
     }
  
+    //SUCCESS RESPONSE
     res.status(201).json({
         status: "success",
         message: "Order successful",
@@ -131,22 +140,17 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 exports.getAllOrderByAUser = catchAsync(async (req, res, next) => {
     const { userId } = req.params;
 
+    //FINDB ALL THE PROPERTY ORDER PLACED BY A PARTICULAR USER
     const orders = await Order.find({ user: userId }).populate("property");
 
 
+    //FILTER THE ORDER THAT THEIR PROPERTY IS DELETED
     const filterOrder = orders.filter(order => order.property !== null)
     console.log('Orders:', orders); // Log the fetched orders
 
-    // if (!orders || orders.length === 0) {
-    //     return next(new AppError('No orders found for this user', 404));
-    // }
- 
-    // if (!findAUser) {
-    //     return next(new AppError('User not found', 404));
-    // }
 
 
-
+    //RETURN SUCCESS RESPONSE
     res.status(200).json({
         status: "success",
         message: "orders successfully fetched",
@@ -159,16 +163,19 @@ exports.getAllOrderByAUser = catchAsync(async (req, res, next) => {
 
 
 exports.getOrder = catchAsync(async (req, res, next) => {
-    
+
+    //EXTRACT THE ID FROM URL PARAMS
     const { id } = req.params;
 
+    //FIND THE PROPERTY ORDERED BY USERS
     const orderedProperty = await Order.findById(id).populate('property').populate('user');
 
+    //RETURN ERROR MESSAGE IF PROPERTY DOES NOT EXIST
     if (!orderedProperty) {
         return next(new AppError("Property does not exist", 404));
     }
 
-
+//SUCCESS RESPONSE
     res.status(200).json({
         status: "success",
         message: 'order fetched successful',
@@ -181,10 +188,13 @@ exports.getOrder = catchAsync(async (req, res, next) => {
 
 exports.getAllOrder = catchAsync(async (req, res, next) => {
     
+    //FIND ALL ORDER CREATED BY USER
     const allOrder = await Order.find().populate("property").populate("user");
 
+    //FILTER OUT THE ORDER THAT THE USER AND PROPERTY ARE DELETED
     const filterOrder = allOrder.filter(orders => orders.property !== null && orders.user !== null)
 
+    //RETURN SUCCESS RESPONSE
     res.status(200).json({
         status: "success",
         length: allOrder.length,
@@ -209,6 +219,7 @@ exports.approveOrder = catchAsync(async (req, res, next) => {
          return next(new AppError("order does not exist", 400))
     }
     
+    //IF THE USER DOES NOT EXIST RETURN ERROR MESSAGE
     if (!findAUser) {
         return next(new AppError('User not found', 404));
     }
