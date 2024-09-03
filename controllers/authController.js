@@ -9,6 +9,7 @@ const {promisify} = require('util')
 //ENVIRONMENTAL VARIABLES
 const {JWT_EXPIRES_IN, JWT_SECRET, JWT_COOKIE_EXPIRES_IN, NODE_ENV, SAME_SITE} = process.env
 
+//GENERATE JWT 
 const signToken = (id) => {
     return jwt.sign({ id: id }, JWT_SECRET, {
         expiresIn: JWT_EXPIRES_IN
@@ -108,14 +109,6 @@ exports.signUpNewUser = catchAsync(async (req, res, next) => {
     //remove the password from the newUser properties before returning the success response
     newUser.password = undefined;
       
-    //the success response
-    // return res.status(201).json({
-    //     status: "success",
-    //     message: "successfully signed up",
-    //     data: {
-    //         newUser
-    //     }
-    // })
     createAndSendToken(newUser, 201, res)
 
 })
@@ -124,16 +117,20 @@ exports.signUpNewUser = catchAsync(async (req, res, next) => {
 exports.loginUser = catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
 
+    //RETURN ERROR MESSAGE IF USER DID NOT INPUT HIS/HER EMAIL
     if (!email || !password) {
         return next(new AppError("Please input your email or password"));
     }
 
+    //FIND USER USING PROVIDED EMAIL
     const theUser = await User.findOne({ email }).select("+password");
 
+    //RETURN ERROR IF THE USER DOES NOT EXIST OR THE PASSWORD IS INCORRECT
     if (!theUser || !(await theUser.correctPassword(password, theUser.password))) {
         return next(new AppError("incorrect password or email. please try again", 400))
     }
 
+    //FEATURE TO BE IMPLEMENTED IN THE FUTURE
     // if (theUser.emailVerified === false) {
     //     return next(new AppError("Kindly verify your email", 400))
     // }
@@ -158,13 +155,12 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     }
 
     //generate reset token by calling the createResetToken function defined in the userModel
-
     const resetToken = user.createPasswordResetToken();
 
     //save it back to the database 
     await user.save({ validateBeforeSave: false });
 
-    //
+    //URL FOR RESETING PASSWORD
     const resetUrl = `${process.env.originUrl}/reset-password/${resetToken}`;
     const message = `forgot your passowrd? kindly submit your new password to ${resetUrl}. if you did not request for this kindly ignore.`
 
