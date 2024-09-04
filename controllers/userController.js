@@ -5,7 +5,7 @@ const catchAsync = require("../utils/catchAsync");
 
 
 
-
+//FOR FETCHING ALL THE USER
 exports.getAllUser = catchAsync(async (req, res, next) => {
 
     const users = await User.find();
@@ -20,6 +20,7 @@ exports.getAllUser = catchAsync(async (req, res, next) => {
 })
 
 
+//FOR FETCHING A UUSER USING ITS ID
 exports.getAUser = catchAsync(async (req, res, next) => {
     const { id } = req.params;
 
@@ -35,6 +36,7 @@ exports.getAUser = catchAsync(async (req, res, next) => {
 })
 
 
+//FOR CREATING A USER, THIS WILL ONLY BE ACCESIBLE TO ADMIN
 exports.createAUser = catchAsync(async (req, res, next) => {
     
     const { firstName, lastName, userName, email, password, phoneNumber, country, state, confirmPassword, role } = req.body;
@@ -89,6 +91,8 @@ exports.createAUser = catchAsync(async (req, res, next) => {
 })
   
 
+
+//FOR UPDATING USER PROFILE PICTURE
 exports.updateProfilePicture = catchAsync(async (req, res, next) => {
     const { id } = req.params
 
@@ -114,11 +118,13 @@ exports.updateProfilePicture = catchAsync(async (req, res, next) => {
  
 })
 
+
+//FOR UPDATING USER INFO
 exports.updateMe = catchAsync(async (req, res, next) => {
+    
     const { id } = req.params;
     const userUpdateInfo = req.body;
 
-    console.log(req.body, "the ifon")
 
     if (Object.keys(userUpdateInfo).length === 0) {
         return next(new AppError("No data provided for update", 400));

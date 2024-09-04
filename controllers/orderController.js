@@ -49,7 +49,7 @@ const { promisify } = require("util");
 //     })
 
 //     try {
-//         logActivitiesController(
+//         propertyActivitiesController(
 //             user, // Pass the user ID directly
 //             property, // Use order._id for relatedId
 //             'order_placed', // Activity type
@@ -219,16 +219,31 @@ exports.approveOrder = catchAsync(async (req, res, next) => {
          return next(new AppError("order does not exist", 400))
     }
     
-    //IF THE USER DOES NOT EXIST RETURN ERROR MESSAGE
-    if (!findAUser) {
+    //FIND THE USER BY ID
+    const user = await User.findById(theOrder.user);
+
+    if (!user) {
         return next(new AppError('User not found', 404));
     }
 
+    const username = `${user.firstName} ${user.lastName}`;
+
+    const orderUrl = `${req.protocol}://${req.get("host")}/api/v1/order/getAnOrder/${orderId}`;
+    const message = `Your order for a property has been rejected. Kindly take a look at the order here: ${orderUrl}`
+
+    sendEmail({
+        subject: "Your property Order is approved",
+        message,
+        email: user.email,
+        name: username
+    })
+
+
     try {
-        logActivitiesController(
+        propertyActivitiesController(
             theOrder.user, // Pass the user ID directly
             orderId, // Use order._id for relatedId
-            'order_placed', // Activity type
+            'order_approved', // Activity type
         );
     } catch (err) {
         return next(new AppError('Failed to log activity', 500));
@@ -257,14 +272,26 @@ exports.cancelOrder = catchAsync(async (req, res, next) => {
     if (!theOrder) {
         return next(new AppError("order does not exist", 400))
     }
+    const user = await User.findById(theOrder.user);
 
-
-    if (!findAUser) {
+    if (!user) {
         return next(new AppError('User not found', 404));
     }
 
+    const username = `${user.firstName} ${user.lastName}`;
+
+    const orderUrl = `${req.protocol}://${req.get("host")}/api/v1/order/getAnOrder/${orderId}`;
+    const message = `Your order for a property has been rejected. Kindly take a look at the order here: ${orderUrl}`
+
+    sendEmail({
+        subject: "Your property Order is cancelled",
+        message,
+        email: user.email,
+        name: username
+    })
+
     try {
-        logActivitiesController(
+        propertyActivitiesController(
             theOrder.user, // Pass the user ID directly
             orderId, // Use order._id for relatedId
             'order_canceled', // Activity type
@@ -283,6 +310,7 @@ exports.cancelOrder = catchAsync(async (req, res, next) => {
 
 })
  
+
 //REJECT ORDER
 exports.rejectOrder = catchAsync(async (req, res, next) => {
     
@@ -302,7 +330,7 @@ exports.rejectOrder = catchAsync(async (req, res, next) => {
  
     
      try {
-        logActivitiesController(
+        propertyActivitiesController(
             theOrder.user, // Pass the user ID directly
             orderId, // Use order._id for relatedId
             'order_rejected', // Activity type

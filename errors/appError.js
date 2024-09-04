@@ -1,6 +1,6 @@
 
 //appError
-
+//FOR ERROR HANDLING, IT'S EXTENDED TO JAVASCRIPT ERROR HANDLING
 class AppError extends Error{
     constructor(message, statusCode) {
         super(message);

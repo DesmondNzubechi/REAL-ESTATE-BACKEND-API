@@ -8,6 +8,8 @@ const {promisify} = require('util')
 const { propertyActivitiesController } = require('./activitiesController');
 const jwt = require('jsonwebtoken');
 
+
+//FOR CREATING A REVIEW
 exports.createAReview = catchAsync(async (req, res, next) => {
     const { review, property, reviewerName } = req.body;
 
@@ -52,9 +54,6 @@ exports.createAReview = catchAsync(async (req, res, next) => {
         }  
     }
 
-   
- 
-
     res.status(201).json({
         status: "success",
         message: "review succesfully added",
@@ -66,6 +65,7 @@ exports.createAReview = catchAsync(async (req, res, next) => {
 
 })
 
+//MIDDLEWARE FOR FETCHING ALL THE REVIEWS
 exports.getAllReviews = catchAsync(async (req, res, next) => {
     const reviews = await Review.find().populate('user');
 
@@ -79,6 +79,8 @@ exports.getAllReviews = catchAsync(async (req, res, next) => {
     })
 })
 
+
+//MIDDLEWARE FOR FETCHING A PROPERTY REVIEWS
 exports.getPropertyReview = catchAsync(async (req, res, next) => {
     const { property } = req.params
     
