@@ -2,23 +2,29 @@
 
 const AppError = require('../errors/appError');
 
+//GLOBAL ERROR HANDLER
+
+//This handle cast error in the database
 const handleCastErrorDB = err => {
     const message = `Invalid input: ${err.value}`;
     return new AppError(message, 400);
 };
 
+//for duplicate fields
 const handleDuplicateFieldsDB = err => {
     const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
     const message = `Duplicate field value: ${value}. Please use another value!`;
     return new AppError(message, 400);
 };
 
+//handle validation error
 const handleValidationError = err => {
     const errors = Object.values(err.errors).map(el => el.message);
     const message = `Validation error: ${errors.join('. ')}`;
     return new AppError(message, 400);
 };
 
+//error message sent when in development
 const sendDevError = (err, res) => {
     res.status(err.statusCode || 500).json({
         status: err.status || 'error',
@@ -28,6 +34,7 @@ const sendDevError = (err, res) => {
     });
 };
 
+//error message sent when in production
 const sendProdError = (err, res) => {
     if (err.isOperational) {
         res.status(err.statusCode).json({
@@ -42,12 +49,16 @@ const sendProdError = (err, res) => {
         });
     }
 };
+
+//handles jwt error
 const handleJWTErr = () => new AppError("Invalid token. Please login again", 401)
 
+//jwt error when expires
 const handleJWTExpiredError = () => new AppError("Your token already expired. Please login again", 401);
 const { NODE_ENV } = process.env;
 
 
+//export
 module.exports = (err, req, res, next) => {
     err.statusCode = err.statusCode || 404;
     err.status = err.status || 'error';

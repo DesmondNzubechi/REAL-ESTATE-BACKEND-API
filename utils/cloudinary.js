@@ -2,6 +2,8 @@
 
 const cloudinary = require('../cloudinary/Cloudinary');
 
+//FUNCTION FOR UPLOADING OUR IMAGE TO THE CLOUDINARY
+
 const uploadImgToCloudinary = async (imageBuffer) => {
     try {
         const result = await new Promise((resolve, reject) => {

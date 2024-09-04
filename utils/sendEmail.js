@@ -3,6 +3,8 @@ const AppError = require("../errors/appError");
 const pug = require("pug");
 const path = require("path");
 
+//NODEMAILER : FOR SENDING EMAIL TO THE USER'S EMAIL
+
 const { EMAIL_HOST, EMAIL_PORT, EMAIL_PASSWORD, EMAIL_USERNAME, EMAIL_FROM } = process.env;
 
 const sendEmail = async (options) => {

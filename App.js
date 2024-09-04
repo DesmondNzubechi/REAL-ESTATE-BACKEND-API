@@ -58,11 +58,12 @@ app.use("/api/v1/blog", blogRoute);
 app.use("/api/v1/comments", commentRoute);
 
 
+//RETURN ERROR MESSAGE WHEN USER TRIES TO ACCESS ROUTE THAT DOES NOT EXIST
 app.all("*", (req, res, next) => {
     next(new AppError("this route does not exist", 404))
 })
  
-
+//use the globall error handler
 app.use(globalErrorHandler); 
 
 module.exports = app;
