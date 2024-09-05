@@ -3,12 +3,29 @@ const { signUpNewUser, loginUser, forgotPassword, resetPassword, changePassword,
 const { getAllUser, createAUser, updateMe, getAUser, deleteAUser, updateProfilePicture } = require('../controllers/userController');
 const { uploadPhoto, uploadImageToCloudinary } = require('../controllers/uploadController');
 
+const rateLimit = require("express-rate-limit");
+
+
+const authRateLimiter = rateLimit({
+    max: 10,
+    windows : 60 * 60 * 1000,
+    message : "Too many request from this IP. Please try again after 1 hour.",
+    standardHeaders: true,
+    legalHeaders: true,
+})
+
+
+
+
+
 const router = express.Router();
+
+
 
 ////ROUTE FOR SIGNING UP
 router
     .route('/signup')
-    .post(signUpNewUser)
+    .post(authRateLimiter, signUpNewUser)
 
     ////ROUTE FOR RESETING A PASSWORD
 router 
@@ -23,7 +40,7 @@ router
     ////ROUTE FOR LOGIN
 router
     .route("/login")
-    .post(loginUser)
+    .post(authRateLimiter, loginUser)
 
     ////ROUTE FOR FETCHING ALL THE USER
 router
@@ -32,7 +49,7 @@ router
  
 router 
     .route('/changePassword')
-    .patch(protectedRoute, changePassword)
+    .patch(protectedRoute, authRateLimiter, changePassword)
  
 router
     .route("/createAUser")
@@ -46,6 +63,7 @@ router
     .route('/updateProfilePic/:id')
     .patch(protectedRoute, uploadPhoto, uploadImageToCloudinary, updateProfilePicture)
  
+    //ROUTE FOR DELETING  A USER
     router
     .route('/deleteAUser')
     .patch(protectedRoute, deleteAUser)

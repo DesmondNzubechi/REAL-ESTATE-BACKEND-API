@@ -20,6 +20,6 @@ const uploadImgToCloudinary = async (imageBuffer) => {
     }
 };
 
-module.exports = {
+module.exports = { 
     uploadImgToCloudinary
 };
