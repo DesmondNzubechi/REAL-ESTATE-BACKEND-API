@@ -1,7 +1,7 @@
 {
-  "name": "home-feartures-backend",
+  "name": "real-estate-backend",
   "version": "1.0.0",
-  "description": "home features backend",
+  "description": "real estate backend",
   "main": "App.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
