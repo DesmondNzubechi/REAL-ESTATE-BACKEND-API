@@ -4,6 +4,7 @@ const { getAllUser, createAUser, updateMe, getAUser, deleteAUser, updateProfileP
 const { uploadPhoto, uploadImageToCloudinary } = require('../controllers/uploadController');
 
 const rateLimit = require("express-rate-limit");
+const { signInWithGoogle } = require('../controllers/googleAuthController');
 
 
 const authRateLimiter = rateLimit({
@@ -26,6 +27,10 @@ const router = express.Router();
 router
     .route('/signup')
     .post(authRateLimiter, signUpNewUser)
+
+    router
+    .route('/googleAuth')
+    .get(authRateLimiter, signInWithGoogle)
 
     ////ROUTE FOR RESETING A PASSWORD
 router 

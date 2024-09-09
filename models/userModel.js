@@ -71,6 +71,10 @@ const userSchema = new Schema({
         type: Boolean,
         default: false,
     },
+    googleId: { 
+        type: String,
+        unique: true
+    },
     emailVerificationToken: String,
     emailVerificationTokenExpires: Date,
     passwordResetToken: String,

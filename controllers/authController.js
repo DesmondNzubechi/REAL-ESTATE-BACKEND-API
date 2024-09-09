@@ -5,6 +5,129 @@ const jwt = require('jsonwebtoken');
 const sendEmail = require("../utils/sendEmail");
 const crypto = require('crypto');
 const {promisify} = require('util')
+// const {OAuth2Client} = require("google-auth-library");
+
+
+// exports.signInWithGoogle = catchAsync(async(req, res, next) => {
+
+//     res.header('Access-Control-Allow-Origin', process.env.originUrl);
+//     res.header("Referrer-Policy", 'no-referrer-when-downgrade');
+
+//     const redirectUrl = `${process.env.originUrl}/signin`;
+
+//     const oAuth2Client = new OAuth2Client(
+//         process.env.googleClientId,
+//         process.env.googleClientSecret,
+//         redirectUrl
+//     );
+
+//     const authorizedUrl = oAuth2Client.generateAuthUrl({
+//         access_type : "offline",
+//         scope : 'https://www.googleapis.com/auth/userinfo.profile openid',
+//         prompt : 'consent'
+//     })
+
+//     res.json({url:authorizedUrl});
+// })
+
+// const getUserData = async(access_token) => {
+//     const response = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`);
+//     const data = await response.json();
+//     console.log("the data", data);
+// }
+
+// const theuserData = async(req, res, next) => {
+ 
+    
+//     try {
+//         const code = req.query.code;
+//         const redirectUrl  = `${process.env.originUrl}/my-account`;
+//         const oAuth2Client = new OAuth2Client(
+//             process.env.googleClientId,
+//             process.env.googleClientSecret,
+//             redirectUrl
+//         ); 
+
+//         const res = await oAuth2Client.getToken(code);
+
+//         await oAuth2Client.setCredentials(res.tokens);
+//         console.log("acquired toke");
+
+//         const user = oAuth2Client.credentials;
+
+//         console.log("user credentials", user);
+
+//         await getUserData(user.access_token);
+
+//     } catch (error) {
+//         HTMLFormControlsCollection.log("there an error here", error)
+//     }
+
+// }
+
+const {OAuth2Client} = require("google-auth-library");
+
+exports.signInWithGoogle = catchAsync(async(req, res, next) => {
+    res.header('Access-Control-Allow-Origin', process.env.originUrl);
+    res.header("Referrer-Policy", 'no-referrer-when-downgrade');
+
+    const redirectUrl = `${process.env.originUrl}/signin`;
+
+    const oAuth2Client = new OAuth2Client(
+        process.env.googleClientId,
+        process.env.googleClientSecret,
+        redirectUrl
+    );
+
+    const authorizedUrl = oAuth2Client.generateAuthUrl({
+        access_type: "offline",
+        scope: 'https://www.googleapis.com/auth/userinfo.profile openid',
+        prompt: 'consent'
+    });
+
+    res.json({ url: authorizedUrl });
+});
+
+const getUserData = async (access_token) => {
+    const response = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`);
+    const data = await response.json();
+    console.log("the data", data);
+};
+
+exports.theuserData = async (req, res, next) => {
+    try {
+        // Extract the code from the query params
+        const code = req.query.code;
+
+        const redirectUrl = `${process.env.originUrl}/signin`;
+        const oAuth2Client = new OAuth2Client(
+            process.env.googleClientId,
+            process.env.googleClientSecret,
+            redirectUrl
+        );
+
+        // Exchange the authorization code for tokens
+        const tokenResponse = await oAuth2Client.getToken(code);
+
+        // Set the credentials on the OAuth2 client
+        await oAuth2Client.setCredentials(tokenResponse.tokens);
+
+        console.log("acquired token");
+
+        const user = oAuth2Client.credentials;
+
+        console.log("user credentials", user);
+
+        // Fetch user data from Google API
+        await getUserData(user.access_token);
+
+    } catch (error) {
+        console.log("There is an error here", error);
+    }
+};
+
+
+
 
 //ENVIRONMENTAL VARIABLES
 const {JWT_EXPIRES_IN, JWT_SECRET, JWT_COOKIE_EXPIRES_IN, NODE_ENV, SAME_SITE} = process.env
@@ -139,7 +262,7 @@ exports.loginUser = catchAsync(async (req, res, next) => {
 
 
 })
-
+ 
 
  
 exports.forgotPassword = catchAsync(async (req, res, next) => {
@@ -238,7 +361,7 @@ exports.getMe = catchAsync(async (req, res, next) => {
     if (!token) {
         return next(new AppError("You are not authorized to access this route", 401));
     }
-
+ 
     //verify the token
     let decoded;
     try {
