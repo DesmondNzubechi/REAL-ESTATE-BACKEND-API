@@ -28,12 +28,11 @@ const userSchema = new Schema({
     },
     password: {
         type: String,
-        required: [true, "Kindly input your password"],
+        select : false,
         minLength: 10
     },
     confirmPassword: {
         type: String,
-        required: [true, "Please confirm your password"],
         validate: {
             validator: function (el) {
                 return el === this.password;

@@ -1,10 +1,10 @@
 const express = require('express');
-const { signUpNewUser, loginUser, forgotPassword, resetPassword, changePassword, protectedRoute, verifyTheUserEmail, getMe, logoutUser} = require('../controllers/authController');
+const { signUpNewUser, signInWithGoogle, theGoogleCallback, loginUser, forgotPassword, resetPassword, changePassword, protectedRoute, verifyTheUserEmail, getMe, logoutUser} = require('../controllers/authController');
 const { getAllUser, createAUser, updateMe, getAUser, deleteAUser, updateProfilePicture } = require('../controllers/userController');
 const { uploadPhoto, uploadImageToCloudinary } = require('../controllers/uploadController');
+//const { signInWithGoogle,  theGoogleCallback} = require('../controllers/googleAuthController');
 
 const rateLimit = require("express-rate-limit");
-const { signInWithGoogle } = require('../controllers/googleAuthController');
 
 
 const authRateLimiter = rateLimit({
@@ -31,6 +31,10 @@ router
     router
     .route('/googleAuth')
     .get(authRateLimiter, signInWithGoogle)
+
+    router
+    .route('/googleAuth/signin')
+    .get(authRateLimiter, theGoogleCallback)
 
     ////ROUTE FOR RESETING A PASSWORD
 router 

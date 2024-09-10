@@ -5,127 +5,8 @@ const jwt = require('jsonwebtoken');
 const sendEmail = require("../utils/sendEmail");
 const crypto = require('crypto');
 const {promisify} = require('util')
-// const {OAuth2Client} = require("google-auth-library");
-
-
-// exports.signInWithGoogle = catchAsync(async(req, res, next) => {
-
-//     res.header('Access-Control-Allow-Origin', process.env.originUrl);
-//     res.header("Referrer-Policy", 'no-referrer-when-downgrade');
-
-//     const redirectUrl = `${process.env.originUrl}/signin`;
-
-//     const oAuth2Client = new OAuth2Client(
-//         process.env.googleClientId,
-//         process.env.googleClientSecret,
-//         redirectUrl
-//     );
-
-//     const authorizedUrl = oAuth2Client.generateAuthUrl({
-//         access_type : "offline",
-//         scope : 'https://www.googleapis.com/auth/userinfo.profile openid',
-//         prompt : 'consent'
-//     })
-
-//     res.json({url:authorizedUrl});
-// })
-
-// const getUserData = async(access_token) => {
-//     const response = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`);
-//     const data = await response.json();
-//     console.log("the data", data);
-// }
-
-// const theuserData = async(req, res, next) => {
- 
-    
-//     try {
-//         const code = req.query.code;
-//         const redirectUrl  = `${process.env.originUrl}/my-account`;
-//         const oAuth2Client = new OAuth2Client(
-//             process.env.googleClientId,
-//             process.env.googleClientSecret,
-//             redirectUrl
-//         ); 
-
-//         const res = await oAuth2Client.getToken(code);
-
-//         await oAuth2Client.setCredentials(res.tokens);
-//         console.log("acquired toke");
-
-//         const user = oAuth2Client.credentials;
-
-//         console.log("user credentials", user);
-
-//         await getUserData(user.access_token);
-
-//     } catch (error) {
-//         HTMLFormControlsCollection.log("there an error here", error)
-//     }
-
-// }
-
-const {OAuth2Client} = require("google-auth-library");
-
-exports.signInWithGoogle = catchAsync(async(req, res, next) => {
-    res.header('Access-Control-Allow-Origin', process.env.originUrl);
-    res.header("Referrer-Policy", 'no-referrer-when-downgrade');
-
-    const redirectUrl = `${process.env.originUrl}/signin`;
-
-    const oAuth2Client = new OAuth2Client(
-        process.env.googleClientId,
-        process.env.googleClientSecret,
-        redirectUrl
-    );
-
-    const authorizedUrl = oAuth2Client.generateAuthUrl({
-        access_type: "offline",
-        scope: 'https://www.googleapis.com/auth/userinfo.profile openid',
-        prompt: 'consent'
-    });
-
-    res.json({ url: authorizedUrl });
-});
-
-const getUserData = async (access_token) => {
-    const response = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`);
-    const data = await response.json();
-    console.log("the data", data);
-};
-
-exports.theuserData = async (req, res, next) => {
-    try {
-        // Extract the code from the query params
-        const code = req.query.code;
-
-        const redirectUrl = `${process.env.originUrl}/signin`;
-        const oAuth2Client = new OAuth2Client(
-            process.env.googleClientId,
-            process.env.googleClientSecret,
-            redirectUrl
-        );
-
-        // Exchange the authorization code for tokens
-        const tokenResponse = await oAuth2Client.getToken(code);
-
-        // Set the credentials on the OAuth2 client
-        await oAuth2Client.setCredentials(tokenResponse.tokens);
-
-        console.log("acquired token");
-
-        const user = oAuth2Client.credentials;
-
-        console.log("user credentials", user);
-
-        // Fetch user data from Google API
-        await getUserData(user.access_token);
-
-    } catch (error) {
-        console.log("There is an error here", error);
-    }
-};
-
+const { OAuth2Client } = require("google-auth-library");
+const axios = require("axios"); // Import axios to make HTTP requests
 
 
 
@@ -172,6 +53,87 @@ const createAndSendToken = (user, statusCode, res) => {
         },
     });
 };
+
+
+
+// Function to fetch user data from Google
+const getUserData = async (accessToken) => {
+    const response = await axios.get('https://www.googleapis.com/oauth2/v1/userinfo?alt=json', {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+    return response.data;
+};
+
+// Route that generates Google OAuth URL
+exports.signInWithGoogle = catchAsync(async (req, res, next) => {
+    res.header('Access-Control-Allow-Origin', process.env.originUrl);
+    res.header("Referrer-Policy", 'no-referrer-when-downgrade');
+
+    const redirectUrl = `${process.env.backendUrl}/api/v1/user/googleAuth/signin`;
+
+    const oAuth2Client = new OAuth2Client(
+        process.env.googleClientId,
+        process.env.googleClientSecret,
+        redirectUrl
+    );
+
+    const authorizedUrl = oAuth2Client.generateAuthUrl({
+        access_type: "offline",
+        scope: [
+            'https://www.googleapis.com/auth/userinfo.profile', 
+            'https://www.googleapis.com/auth/userinfo.email', // Include the email scope
+            'openid'
+        ],
+        prompt: 'consent'
+    });
+    
+
+    // Send URL back to frontend
+    res.json({ url: authorizedUrl });
+});
+
+// Route to handle Google OAuth callback
+exports.theGoogleCallback = catchAsync(async (req, res, next) => {
+    const code = req.query.code;
+    const oAuth2Client = new OAuth2Client(
+        process.env.googleClientId,
+        process.env.googleClientSecret,
+        `${process.env.backendUrl}/api/v1/user/googleAuth/signin`
+    );
+
+    // Exchange authorization code for tokens
+    const tokenResponse = await oAuth2Client.getToken(code);
+    oAuth2Client.setCredentials(tokenResponse.tokens);
+
+    // Get user data from Google
+    const userInfo = await getUserData(tokenResponse.tokens.access_token);
+
+    if(!userInfo){
+        return next(new AppError("User info from google does not exist", 404))
+    }
+
+    let user = await User.findOne({ googleId: userInfo.sub });
+
+    if (!user) {
+        user = await User.create({
+            userName: `${userInfo.given_name}`,
+            firstName: userInfo.given_name,
+            lastName: userInfo.family_name,
+            googleId: userInfo.sub,
+            images: userInfo.picture,
+            email: userInfo.email
+        });
+    }
+
+
+    // Create token or session as needed
+    createAndSendToken(user, 201, res);
+
+    // Redirect to frontend dashboard or application URL
+    res.redirect(`${process.env.originUrl}/my-account`); // Update this URL as needed
+});
 
 
 
