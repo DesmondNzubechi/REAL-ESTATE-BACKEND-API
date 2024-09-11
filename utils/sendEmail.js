@@ -42,9 +42,7 @@ const sendEmail = async (options) => {
     // Finally, send the email
     await transporter.sendMail(mailOptions);
  
-    console.log("Successfully sent");
   } catch (error) {
-    console.log(error);
     throw new AppError("An error occurred, please try again", 400);
   }
 };

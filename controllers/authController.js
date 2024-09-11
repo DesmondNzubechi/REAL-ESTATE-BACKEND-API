@@ -328,13 +328,11 @@ exports.getMe = catchAsync(async (req, res, next) => {
     let decoded;
     try {
         decoded = await promisify(jwt.verify)(token, JWT_SECRET);
-        console.log('Token decoded:', decoded);
     } catch (error) {
         return next(new AppError("Token verification failed", 400));
     }
 //find the user, using the id attached to the token
     const user = await User.findById(decoded.id);
-    console.log('User found:', user);
 
     //check if the user exist, if not return an error message
     if (!user) {

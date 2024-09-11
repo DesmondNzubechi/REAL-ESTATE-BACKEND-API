@@ -33,9 +33,7 @@ exports.blogActivitiesController = catchAsync(async (user, blog) => {
   
     try {
         const newActivity = await blogActivity.create(activityData)
-        console.log('Activity logged successfully:', newActivity); // Debugging
     } catch (error) {
-        console.error('Error logging activity:', error); // Debugging
         throw new Error('Failed to log activity');
     }
 }); 

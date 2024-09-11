@@ -1,7 +1,6 @@
 const AppError = require("../errors/appError");
 const Blog = require("../models/blogModel");
 const Comment = require("../models/commentModel");
-const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const { blogActivitiesController } = require("./activitiesController");
 const { promisify } = require('util');

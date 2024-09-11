@@ -22,9 +22,6 @@ exports.createAReview = catchAsync(async (req, res, next) => {
     }
 
 
-    console.log("user id", theUserId)
-
-
     if (!review || !property || !reviewerName) {
         return next(new AppError("fields are required", 404))
     }

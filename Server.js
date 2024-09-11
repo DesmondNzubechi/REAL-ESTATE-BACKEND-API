@@ -16,7 +16,7 @@ const DB = DATABASE.replace("<password>", DATABASE_PASSWORD);
 mongoose.connect(DB).then(con => { 
     console.log('connected to the Database')
 }).catch(err => {
-    console.log("an error occured", err)
+    console.log("an error occured")
 })
 
 

@@ -8,65 +8,6 @@ const jwt = require('jsonwebtoken');
 const { promisify } = require("util");
 
 
-// exports.createOrder = catchAsync(async (req, res, next) => {
-//     const { property } = req.body;
-
-//     const userToken = req.cookies.jwt;
-
-//     let theUserId;
-
-//     if (userToken) {
-//         theUserId = await promisify(jwt.verify)(userToken, process.env.JWT_SECRET);
-//     }
-
-//     if (!property || !theUserId) {
-//         return next(new AppError('Property and user are required', 400));
-//     }
-
-//     const theUser = await User.findById(theUserId);
-
-//     if (!theUser) {
-//         return next(new AppError("User does not exist", 401))
-//     }
-
-//     const order = await Order.create({
-//         property,
-//         user : theUserId.id
-//     });
-
-   
-  
-//     const username = `${theUser.firstName} ${theUser.lastName}`;
-
-//     const orderUrl = `${process.env.originUrl}/my-order/${order._id}`;
-//     const message = `Your order for a property was successful. Kindly take a look at the order here: ${orderUrl}`
-
-//     sendEmail({
-//         subject: "Your property Order was successful",
-//         message,
-//         email: theUser.email,
-//         name: username
-//     })
-
-//     try {
-//         propertyActivitiesController(
-//             user, // Pass the user ID directly
-//             property, // Use order._id for relatedId
-//             'order_placed', // Activity type
-//             'properties'
-//         );
-//     } catch (err) {
-//         return next(new AppError('Failed to log activity', 500));
-//     }
-
-//     res.status(201).json({
-//         status: "success",
-//         message: "Order successful",
-//         data: {
-//             order
-//         }
-//     });
-// });
 exports.createOrder = catchAsync(async (req, res, next) => {
     const { property } = req.body;
 
@@ -146,7 +87,6 @@ exports.getAllOrderByAUser = catchAsync(async (req, res, next) => {
 
     //FILTER THE ORDER THAT THEIR PROPERTY IS DELETED
     const filterOrder = orders.filter(order => order.property !== null)
-    console.log('Orders:', orders); // Log the fetched orders
 
 
 
