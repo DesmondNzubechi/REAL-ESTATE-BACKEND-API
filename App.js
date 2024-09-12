@@ -27,7 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 
 
 const corsOptions = {
-    origin: process.env.originUrl,
+    origin: [process.env.originUrl, process.env.backendUrl],
     methods: 'GET,POST,DELETE,PATCH',
     allowedHeaders: 'Content-Type, Authorization',
     credentials: true,
@@ -65,7 +65,11 @@ const swaggerOptions = {
 
       `,
     },
-   
+    servers: [
+      { 
+        url: process.env.backendUrl || "https://home-features-backend.vercel.app"
+      },
+    ], 
     components: {
       schemas: {
         Property: {
