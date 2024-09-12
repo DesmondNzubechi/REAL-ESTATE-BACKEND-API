@@ -48,9 +48,23 @@ const swaggerOptions = {
   swaggerDefinition: {
     openapi: '3.0.0',
     info: {
-      title: 'Real Estate API',
+      title: 'PROPERTY MANAGEMENT API(Real Estate API)',
       version: '1.0.0',
-      description: 'API for managing properties, users, orders, and blogs in a real estate platform',
+      description: `
+
+
+      The Real Estate API is a comprehensive backend service designed to power a real estate platform, enabling users to explore, manage, and interact with various property listings. This API caters to the needs of both administrators and end-users by providing a wide range of features that facilitate property management, user engagement, and secure transactions. It is built with Node.js and Express.js, with MongoDB as the database, and it integrates various middleware and security features to ensure a smooth and safe user experience.
+
+        FEATURES
+        - User Authentication and Authorization: User registration, email verification, and JWT authentication.
+        - Property Management: Creating, updating, deleting, and retrieving property listings, including land listings and ordering properties.
+        - User Engagement: Review and blog systems with comments.
+        - Notification System: Email notifications for orders and password resets.
+        - Security Features: CORS configuration, secure cookie handling, and JWT protection.
+        - Admin Features: Full control over properties, blogs, and activity logs.
+
+
+      `,
     },
     servers: [
       { 
@@ -63,64 +77,37 @@ const swaggerOptions = {
           type: 'object',
           required: ['name', 'price', 'location', 'images', 'bathroom', 'bedroom', 'status', 'garage', 'yearBuilt', 'type'],
           properties: {
-            name: {
-              type: 'string',
-              description: 'Name of the property',
-            },
-            price: {
-              type: 'number',
-              description: 'Price of the property',
-            },
-            location: {
-              type: 'string',
-              description: 'Location of the property',
-            },
-            images: {
+            name: { type: 'string', description: 'Name of the property' },
+            price: { type: 'number', description: 'Price of the property' },
+            location: { type: 'string', description: 'Location of the property' },
+            images: { 
               type: 'array',
-              items: {
-                type: 'string',
-              },
-              description: 'Images of the property',
+              items: { type: 'string' },
+              description: 'Images of the property'
             },
-            bathroom: {
-              type: 'number',
-              description: 'Number of bathrooms',
-            },
-            bedroom: {
-              type: 'number',
-              description: 'Number of bedrooms',
-            },
-            status: {
-              type: 'string',
-              description: 'Property status (e.g., available, sold)',
-            },
-            garage: {
-              type: 'number',
-              description: 'Number of parking spaces',
-            },
-            yearBuilt: {
-              type: 'string',
-              description: 'Year the property was built',
-            },
-            type: {
-              type: 'string',
-              description: 'Type of property (e.g., apartment, house)',
-            },
+            bathroom: { type: 'number', description: 'Number of bathrooms' },
+            bedroom: { type: 'number', description: 'Number of bedrooms' },
+            status: { type: 'string', description: 'Property status (e.g., available, sold)' },
+            garage: { type: 'number', description: 'Number of parking spaces' },
+            yearBuilt: { type: 'string', description: 'Year the property was built' },
+            type: { type: 'string', description: 'Type of property (e.g., apartment, house)' },
           },
         },
-        Users : {},
-        Reviews: {},
-        Orders: {},
-       Activities : {},
-        Comments: {},
-        Blog: {},
-        Land: {}
+        Users: {}, // Add schema details
+        Reviews: {}, // Add schema details
+        Orders: {}, // Add schema details
+        Activities: {}, // Add schema details
+        Comments: {}, // Add schema details
+        Blog: {}, // Add schema details
+        Land: {} // Add schema details
       },
     },
   },
   apis: ['./routes/*.js'], // Path to your route files
 };
-  
+
+module.exports = swaggerOptions;
+
   const swaggerDocs = swaggerJsDoc(swaggerOptions);
   app.use(
     '/', 
