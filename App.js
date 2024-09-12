@@ -70,7 +70,7 @@ const swaggerOptions = {
       { 
         url: process.env.backendUrl || 'http://localhost:5000', // Fallback to localhost if env variable isn't set
       },
-    ],
+    ], 
     components: {
       schemas: {
         Property: {
@@ -110,7 +110,7 @@ module.exports = swaggerOptions;
 
   const swaggerDocs = swaggerJsDoc(swaggerOptions);
   app.use(
-    '/', 
+    '/api-docs', 
     swaggerUi.serve, 
     swaggerUi.setup(swaggerDocs)
   );
