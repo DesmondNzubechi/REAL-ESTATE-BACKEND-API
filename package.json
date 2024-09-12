@@ -30,7 +30,8 @@
     "pug": "^3.0.3",
     "sharp": "^0.33.4",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1",
+    "swagger-ui": "^4.19.1",
+    "swagger-ui-express": "^4.6.3",
     "validator": "^13.12.0"
   }
 }

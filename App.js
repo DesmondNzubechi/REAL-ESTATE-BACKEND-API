@@ -14,7 +14,7 @@ const cookieParser = require("cookie-parser")
 const cors = require("cors");
 const app = express(); 
 const swaggerJsDoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
+const swaggerUi = require("swagger-ui-express");
 
 
 //implement cookie-parser

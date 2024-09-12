@@ -66,6 +66,7 @@ const getUserData = async (accessToken) => {
     return response.data;
 };
 
+
 // Route that generates Google OAuth URL
 exports.signInWithGoogle = catchAsync(async (req, res, next) => {
     res.header('Access-Control-Allow-Origin', process.env.originUrl);
@@ -83,16 +84,14 @@ exports.signInWithGoogle = catchAsync(async (req, res, next) => {
         access_type: "offline",
         scope: [
             'https://www.googleapis.com/auth/userinfo.profile', 
-            'https://www.googleapis.com/auth/userinfo.email', // Include the email scope
+            'https://www.googleapis.com/auth/userinfo.email',
             'openid'
         ],
         prompt: 'consent'
     });
     
-
-    // Send URL back to frontend
-    res.json({ url: authorizedUrl });
 });
+
 
 // Route to handle Google OAuth callback
 exports.theGoogleCallback = catchAsync(async (req, res, next) => {
