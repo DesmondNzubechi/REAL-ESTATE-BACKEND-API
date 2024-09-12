@@ -13,6 +13,9 @@ const globalErrorHandler = require('./utils/errorController');
 const cookieParser = require("cookie-parser")
 const cors = require("cors");
 const app = express(); 
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+
 
 //implement cookie-parser
 app.use(cookieParser())
@@ -37,9 +40,89 @@ const corsOptions = {
 
 
 // Test route to ensure basic functionality
-app.get('/', (req, res) => {
-    res.send('API is working');  
-});
+// app.get('/', (req, res) => {
+//     res.send('API is working');  
+// });
+
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Real Estate API',
+      version: '1.0.0',
+      description: 'API for managing properties, users, orders, and blogs in a real estate platform',
+    },
+    servers: [
+      { 
+        url: process.env.backendUrl || 'http://localhost:5000', // Fallback to localhost if env variable isn't set
+      },
+    ],
+    components: {
+      schemas: {
+        Property: {
+          type: 'object',
+          required: ['name', 'price', 'location', 'images', 'bathroom', 'bedroom', 'status', 'garage', 'yearBuilt', 'type'],
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Name of the property',
+            },
+            price: {
+              type: 'number',
+              description: 'Price of the property',
+            },
+            location: {
+              type: 'string',
+              description: 'Location of the property',
+            },
+            images: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+              description: 'Images of the property',
+            },
+            bathroom: {
+              type: 'number',
+              description: 'Number of bathrooms',
+            },
+            bedroom: {
+              type: 'number',
+              description: 'Number of bedrooms',
+            },
+            status: {
+              type: 'string',
+              description: 'Property status (e.g., available, sold)',
+            },
+            garage: {
+              type: 'number',
+              description: 'Number of parking spaces',
+            },
+            yearBuilt: {
+              type: 'string',
+              description: 'Year the property was built',
+            },
+            type: {
+              type: 'string',
+              description: 'Type of property (e.g., apartment, house)',
+            },
+          },
+        },
+        Users : {},
+        Reviews: {},
+        Orders: {}
+      },
+    },
+  },
+  apis: ['./routes/*.js'], // Path to your route files
+};
+  
+  const swaggerDocs = swaggerJsDoc(swaggerOptions);
+  app.use(
+    '/', 
+    swaggerUi.serve, 
+    swaggerUi.setup(swaggerDocs)
+  );
 
 //testing the middleware
 app.use((req, res, next) => {

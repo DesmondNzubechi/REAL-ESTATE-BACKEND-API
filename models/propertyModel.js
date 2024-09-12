@@ -1,7 +1,7 @@
 //PROPERTY MODEL
 
 const mongoose = require("mongoose");
-
+ 
 const { Schema } = mongoose;
 
 const propertySchema = new Schema({

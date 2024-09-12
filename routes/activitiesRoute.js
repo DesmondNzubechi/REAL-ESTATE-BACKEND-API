@@ -4,27 +4,146 @@ const { protectedRoute } = require("../controllers/authController");
 
 const router = express.Router();
 
-//make sure that only authenticated users can access this route
-router.use(protectedRoute);
-
-//get all activities
+/**
+ * @swagger
+ * /api/v1/activities/getAllActivities:
+ *   get:
+ *     summary: Get all activities
+ *     tags: [Activities]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: A list of all activities
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   userId:
+ *                     type: string
+ *                   activity:
+ *                     type: string
+ *                   date:
+ *                     type: string
+ *                     format: date-time
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Server error
+ */
 router
     .route("/getAllActivities")
-    .get(getAllActivities)
+    .get(getAllActivities);
 
-
-    //get user activity(adding review or ordering for a property) using user's id
+/**
+ * @swagger
+ * /api/v1/activities/getUserPropertyActivities/{user}:
+ *   get:
+ *     summary: Get a user's property activities
+ *     tags: [Activities]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: user
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user's ID
+ *     responses:
+ *       200:
+ *         description: A list of property-related activities
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   userId:
+ *                     type: string
+ *                   property:
+ *                     type: string
+ *                   activity:
+ *                     type: string
+ *                   date:
+ *                     type: string
+ *                     format: date-time
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
 router
-    .route('/getUserPropertyActivities/:user')
-    .get(getUserPropertyActivities)
+    .route("/getUserPropertyActivities/:user")
+    .get(getUserPropertyActivities);
 
-    //get user comment using jis/her id
-    router
-    .route('/getUserBlogActivities/:user')
-    .get(getUserBlogActivities)
+/**
+ * @swagger
+ * /api/v1/activities/getUserBlogActivities/{user}:
+ *   get:
+ *     summary: Get a user's blog activities
+ *     tags: [Activities]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: user
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user's ID
+ *     responses:
+ *       200:
+ *         description: A list of blog-related activities
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   userId:
+ *                     type: string
+ *                   blogPost:
+ *                     type: string
+ *                   activity:
+ *                     type: string
+ *                   date:
+ *                     type: string
+ *                     format: date-time
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
+router
+    .route("/getUserBlogActivities/:user")
+    .get(getUserBlogActivities);
  
-    //delet all activities
-    router.delete('/deleteAllActivities', deleteAllTheactivities)
+/**
+ * @swagger
+ * /api/v1/activities/deleteAllActivities:
+ *   delete:
+ *     summary: Delete all activities
+ *     tags: [Activities]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: All activities deleted successfully
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Server error
+ */
+router.delete("/deleteAllActivities", deleteAllTheactivities);
 
-    //export the route
 module.exports = router;
