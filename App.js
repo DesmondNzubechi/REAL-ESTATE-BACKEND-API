@@ -110,6 +110,7 @@ module.exports = swaggerOptions;
   const swaggerDocs = swaggerJsDoc(swaggerOptions);
   app.use(
     '/api-docs', 
+    express.static('node_modules/swagger-ui-dist/', {index: false}),
     swaggerUi.serve, 
     swaggerUi.setup(swaggerDocs)
   );
