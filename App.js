@@ -65,11 +65,7 @@ const swaggerOptions = {
 
       `,
     },
-    servers: [
-      { 
-        url: process.env.backendUrl || "https://home-features-backend.vercel.app"
-      },
-    ], 
+   
     components: {
       schemas: {
         Property: {
