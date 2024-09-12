@@ -39,10 +39,10 @@ const corsOptions = {
   app.options('*', cors(corsOptions));
 
 
-// Test route to ensure basic functionality
-// app.get('/', (req, res) => {
-//     res.send('API is working');  
-// });
+//Test route to ensure basic functionality
+app.get('/', (req, res) => {
+    res.send('API is working');  
+});
 
 const swaggerOptions = {
   swaggerDefinition: {
