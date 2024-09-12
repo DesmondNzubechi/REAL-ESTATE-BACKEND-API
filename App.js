@@ -110,7 +110,11 @@ const swaggerOptions = {
         },
         Users : {},
         Reviews: {},
-        Orders: {}
+        Orders: {},
+       Activities : {},
+        Comments: {},
+        Blog: {},
+        Land: {}
       },
     },
   },
