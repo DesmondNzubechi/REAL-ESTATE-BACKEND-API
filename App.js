@@ -16,6 +16,13 @@ const app = express();
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
+const cspDefaults = helmet.contentSecurityPolicy.getDefaultDirectives();
+delete cspDefaults['upgrade-insecure-requests'];
+
+app.use(helmet({
+    contentSecurityPolicy: { directives: cspDefaults }
+}));
+
 
 //implement cookie-parser
 app.use(cookieParser())
@@ -27,9 +34,9 @@ app.use(express.urlencoded({ extended: true }));
 
 
 const corsOptions = {
-    origin: [process.env.originUrl, process.env.backendUrl],
+    origin: process.env.originUrl,
     methods: 'GET,POST,DELETE,PATCH',
-    allowedHeaders: 'Content-Type, Authorization',
+    allowedHeaders: 'Content-Type, Authorization, api_key',
     credentials: true,
   };
   
