@@ -16,13 +16,6 @@ const app = express();
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
-const cspDefaults = helmet.contentSecurityPolicy.getDefaultDirectives();
-delete cspDefaults['upgrade-insecure-requests'];
-
-app.use(helmet({
-    contentSecurityPolicy: { directives: cspDefaults }
-}));
-
 
 //implement cookie-parser
 app.use(cookieParser())
