@@ -67,7 +67,7 @@ const swaggerOptions = {
     },
     servers: [
       { 
-        url: process.env.backendUrl
+        url: process.env.backendUrl || "https://home-features-backend.vercel.app"
       },
     ], 
     components: {
@@ -92,13 +92,13 @@ const swaggerOptions = {
             type: { type: 'string', description: 'Type of property (e.g., apartment, house)' },
           },
         },
-        Users: {}, // Add schema details
-        Reviews: {}, // Add schema details
-        Orders: {}, // Add schema details
-        Activities: {}, // Add schema details
-        Comments: {}, // Add schema details
-        Blog: {}, // Add schema details
-        Land: {} // Add schema details
+        Users: {},
+        Reviews: {},
+        Orders: {},
+        Activities: {},
+        Comments: {},
+        Blog: {},
+        Land: {}
       },
     },
   },
