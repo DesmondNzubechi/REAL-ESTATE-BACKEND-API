@@ -130,8 +130,6 @@ exports.theGoogleCallback = catchAsync(async (req, res, next) => {
     // Create token or session as needed
     createAndSendToken(user, 201, res);
 
-    // Redirect to frontend dashboard or application URL
-    res.redirect(`${process.env.originUrl}/my-account`); // Update this URL as needed
 });
 
 

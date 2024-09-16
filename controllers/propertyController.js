@@ -109,7 +109,7 @@ exports.deleteAProperty = catchAsync(async (req, res, next) => {
     //THE RESPONSE: THE PROPERTY IS SET TO NULL SINCE IT'S DELETED
     res.status(200).json({
         status: 'success',
-        message: "user succesfully deleted",
+        message: "Property succesfully deleted",
         data: {
            property : null,
         }

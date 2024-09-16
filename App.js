@@ -118,6 +118,10 @@ module.exports = swaggerOptions;
 
   // Serve the Swagger UI static assets (CSS, JS, etc.)
 app.use('/api-docs', express.static(path.join(__dirname, 'node_modules/swagger-ui-dist')));
+app.use('/api-docs/swagger-ui.css', express.static(path.join(__dirname, 'node_modules/swagger-ui-dist/swagger-ui.css')));
+app.use('/api-docs/swagger-ui-bundle.js', express.static(path.join(__dirname, 'node_modules/swagger-ui-dist/swagger-ui-bundle.js')));
+app.use('/api-docs/swagger-ui-standalone-preset.js', express.static(path.join(__dirname, 'node_modules/swagger-ui-dist/swagger-ui-standalone-preset.js')));
+app.use('/api-docs/swagger-ui-init.js', express.static(path.join(__dirname, 'node_modules/swagger-ui-dist/swagger-ui-init.js')));
 
 
 //testing the middleware
