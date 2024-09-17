@@ -1,5 +1,6 @@
 //PROPERTY ROUTE
 
+const { protectedRoute, restrictTo } = require("../controllers/authController");
 const { createProperty, getAllProperty, updateProperty, deleteAProperty, getAProperty } = require("../controllers/propertyController");
 const {uploadImageToCloudinary, uploadPhoto} = require("../controllers/uploadController")
 
@@ -135,7 +136,7 @@ router
  *       404:
  *         description: Property not found
  */
-router.patch("/updateAProperty/:id", updateProperty);
+router.patch("/updateAProperty/:id", protectedRoute, restrictTo('admin'), updateProperty);
   
 
 
@@ -181,7 +182,7 @@ router.patch("/updateAProperty/:id", updateProperty);
  */
 router
   .route('/:id') 
-  .delete(deleteAProperty)
+  .delete(protectedRoute, restrictTo('admin'), deleteAProperty)
   .get(getAProperty);
 
     

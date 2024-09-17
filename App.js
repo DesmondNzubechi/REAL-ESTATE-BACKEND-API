@@ -131,13 +131,13 @@ app.use((req, res, next) => {
 });
  
 //ALL ROUTES
-app.use("/api/v1/properties", propertyRoute);
-app.use("/api/v1/reviews", reviewRoute);
-app.use("/api/v1/land", landRoute);
 app.use("/api/v1/user", userRoute);
+app.use("/api/v1/properties", propertyRoute);
+app.use("/api/v1/land", landRoute);
+app.use("/api/v1/blog", blogRoute);
+app.use("/api/v1/reviews", reviewRoute);
 app.use('/api/v1/order', orderRoute);
 app.use('/api/v1/activities', activitiesRoute); 
-app.use("/api/v1/blog", blogRoute);
 app.use("/api/v1/comments", commentRoute);
 
 

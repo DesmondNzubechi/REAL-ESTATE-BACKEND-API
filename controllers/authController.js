@@ -197,6 +197,7 @@ exports.signUpNewUser = catchAsync(async (req, res, next) => {
 
 
 exports.loginUser = catchAsync(async (req, res, next) => {
+    
     const { email, password } = req.body;
 
     //RETURN ERROR MESSAGE IF USER DID NOT INPUT HIS/HER EMAIL
@@ -212,10 +213,6 @@ exports.loginUser = catchAsync(async (req, res, next) => {
         return next(new AppError("incorrect password or email. please try again", 400))
     }
 
-    //FEATURE TO BE IMPLEMENTED IN THE FUTURE
-    // if (theUser.emailVerified === false) {
-    //     return next(new AppError("Kindly verify your email", 400))
-    // }
 
     createAndSendToken(theUser, 200, res)
 

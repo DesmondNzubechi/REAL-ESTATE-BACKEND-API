@@ -1,6 +1,6 @@
 const express = require("express");
 const { getAllActivities, getUserPropertyActivities, deleteAllTheactivities, getUserBlogActivities } = require("../controllers/activitiesController");
-const { protectedRoute } = require("../controllers/authController");
+const { protectedRoute, restrictTo } = require("../controllers/authController");
 
 const router = express.Router();
 
@@ -36,7 +36,7 @@ const router = express.Router();
  */
 router
     .route("/getAllActivities")
-    .get(getAllActivities);
+    .get(protectedRoute, getAllActivities);
 
 /**
  * @swagger
@@ -81,7 +81,7 @@ router
  */
 router
     .route("/getUserPropertyActivities/:user")
-    .get(getUserPropertyActivities);
+    .get(protectedRoute, getUserPropertyActivities);
 
 /**
  * @swagger
@@ -126,7 +126,7 @@ router
  */
 router
     .route("/getUserBlogActivities/:user")
-    .get(getUserBlogActivities);
+    .get(protectedRoute, getUserBlogActivities);
  
 /**
  * @swagger
@@ -144,6 +144,6 @@ router
  *       500:
  *         description: Server error
  */
-router.delete("/deleteAllActivities", deleteAllTheactivities);
+router.delete("/deleteAllActivities", protectedRoute, restrictTo('admin'), deleteAllTheactivities);
 
 module.exports = router;

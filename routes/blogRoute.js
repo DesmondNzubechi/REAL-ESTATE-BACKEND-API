@@ -1,6 +1,7 @@
 const express = require("express");
 const { createBlogPost, updateBlogPost, publishABlogPost, unPublishABlogPost, deleteBlogPost, getAllBlogPost, getABlogPost } = require("../controllers/blogController");
 const { uploadPhoto, uploadImageToCloudinary } = require("../controllers/uploadController");
+const { restrictTo, protectedRoute } = require("../controllers/authController");
 
 const router = express.Router();
 
@@ -122,7 +123,7 @@ router
  */
 router
     .route("/updateBlogPost/:id")
-    .patch(updateBlogPost);
+    .patch(protectedRoute, restrictTo('admin'), updateBlogPost);
 
 /**
  * @swagger
@@ -147,7 +148,7 @@ router
  */
 router
     .route("/publishBlogPost/:id")
-    .patch(publishABlogPost);
+    .patch(protectedRoute, publishABlogPost);
 
 /**
  * @swagger

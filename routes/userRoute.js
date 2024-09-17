@@ -269,7 +269,7 @@ router
 
 router
     .route("/verifyTheUserEmail/:theToken")
-    .patch(verifyTheUserEmail)
+    .patch(protectedRoute, verifyTheUserEmail)
 
 router 
     .route('/getAUser/:id')
@@ -291,7 +291,7 @@ router
  */
 router
 .route('/logout')
-.post(logoutUser);
+.post(protectedRoute, logoutUser);
 
 
 module.exports = router;

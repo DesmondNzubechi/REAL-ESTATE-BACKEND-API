@@ -1,6 +1,7 @@
 const express = require('express');
 const { uploadPhoto, uploadImageToCloudinary } = require('../controllers/uploadController');
 const { createLand, updateALand, deleteALand, getALand, getAllLand } = require('../controllers/landController');
+const { protectedRoute, restrictTo } = require('../controllers/authController');
 
 const router = express.Router();
 
@@ -103,7 +104,7 @@ router
  */
 router
     .route("/updateLand/:id")
-    .patch(updateALand);
+    .patch(protectedRoute, restrictTo('admin'), updateALand);
 
 /**
  * @swagger
@@ -128,7 +129,7 @@ router
  */
 router
     .route("/deleteLand/:id")
-    .delete(deleteALand);
+    .delete( protectedRoute, restrictTo('admin'), deleteALand);
 
 /**
  * @swagger

@@ -1,5 +1,6 @@
 const express = require("express");
 const { createComment, getAllTheBlogComment, deleteComment, updateComment, getABlogComment } = require("../controllers/commentController");
+const { protectedRoute, restrictTo } = require("../controllers/authController");
 
 const router = express.Router();
 
@@ -107,7 +108,7 @@ router
  */
 router
     .route("/deleteComment/:commentId")
-    .delete(deleteComment);
+    .delete(protectedRoute, restrictTo('admin'), deleteComment);
 
 /**
  * @swagger
@@ -141,6 +142,6 @@ router
  */
 router
     .route("/updateComment/:commentId")
-    .patch(updateComment);
+    .patch(protectedRoute, updateComment);
 
 module.exports = router;
