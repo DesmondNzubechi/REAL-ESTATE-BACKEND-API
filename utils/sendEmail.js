@@ -2,6 +2,9 @@ const nodemailer = require("nodemailer");
 const AppError = require("../errors/appError");
 const pug = require("pug");
 const path = require("path");
+const dotenv = require("dotenv");
+
+dotenv.config({path : "./config.env"});
 
 //NODEMAILER : FOR SENDING EMAIL TO THE USER'S EMAIL
 

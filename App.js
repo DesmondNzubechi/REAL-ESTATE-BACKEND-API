@@ -129,7 +129,6 @@ app.use((req, res, next) => {
     console.log("Hello from the middleware")
     next();
 });
- 
 //ALL ROUTES
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/properties", propertyRoute);

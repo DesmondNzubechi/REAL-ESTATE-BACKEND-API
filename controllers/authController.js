@@ -7,11 +7,14 @@ const crypto = require('crypto');
 const {promisify} = require('util')
 const { OAuth2Client } = require("google-auth-library");
 const axios = require("axios"); // Import axios to make HTTP requests
-
+const dotenv = require("dotenv");
+dotenv.config({path : './config.env'})
 
 
 //ENVIRONMENTAL VARIABLES
 const {JWT_EXPIRES_IN, JWT_SECRET, JWT_COOKIE_EXPIRES_IN, NODE_ENV, SAME_SITE} = process.env
+
+console.log("the secret key", JWT_SECRET)
 
 //GENERATE JWT 
 const signToken = (id) => {
@@ -132,39 +135,32 @@ exports.theGoogleCallback = catchAsync(async (req, res, next) => {
 
 });
 
-
+ 
 
 exports.signUpNewUser = catchAsync(async (req, res, next) => {
 
     //destructure user information from req.body
-    const { firstName, lastName, userName, email, password, phoneNumber, country, state, confirmPassword } = req.body; 
+    const { firstName, lastName,  email, password, confirmPassword } = req.body; 
 
     //find user by email
     const userExistWithEmail = await User.findOne({ email })
-    //find user with username
-    const userExistWithUsername = await User.findOne({ userName })
-    
+  
     //if user already exist with the provided email, return an error message
     if (userExistWithEmail) {
         return next(new AppError("user already exist with email", 400))
     }
-   //if user already exist with the provided username, return an error message
-    if (userExistWithUsername) {
-        return next(new AppError("username already exist", 400))
-    }
 
+
+  
 
     //create new user if there is no user with the email and username
     const newUser = await User.create({
         firstName,
         lastName,
-        userName,
         email,
         password,
-        phoneNumber,
-        country,
-        state,
-        confirmPassword
+        confirmPassword,
+        userName: firstName,
     })
 
     //generate the verification token
@@ -174,7 +170,7 @@ exports.signUpNewUser = catchAsync(async (req, res, next) => {
     await newUser.save({ validateBeforeSave: false });
 
     //verification token url
-    const verifyTokenUrl = `${req.protocol}://${req.get("host")}/api/v1/user/${verifyUser}`;
+    const verifyTokenUrl = `${process.env.originUrl}/${verifyUser}`;
 
     //message to be sent to the user
     const message = `please verify your email by clicking on the following email: ${verifyTokenUrl}. This token expires immediately after 1hr.`;
@@ -187,15 +183,13 @@ exports.signUpNewUser = catchAsync(async (req, res, next) => {
         subject: "Email verification",
         message
     })
-    
-    //remove the password from the newUser properties before returning the success response
-    newUser.password = undefined;
+
       
     createAndSendToken(newUser, 201, res)
 
 })
 
-
+ 
 exports.loginUser = catchAsync(async (req, res, next) => {
     
     const { email, password } = req.body;

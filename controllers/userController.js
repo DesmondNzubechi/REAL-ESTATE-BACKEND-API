@@ -18,7 +18,7 @@ exports.getAllUser = catchAsync(async (req, res, next) => {
         }
     })
 })
-
+ 
 
 //FOR FETCHING A UUSER USING ITS ID
 exports.getAUser = catchAsync(async (req, res, next) => {

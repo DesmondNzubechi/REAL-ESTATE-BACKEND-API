@@ -15,10 +15,11 @@ const userSchema = new Schema({
         type: String,
         required: [true, "Kindly input your last name"],
         minLength : 2,
-    },
+    }, 
     userName: {
         type: String,
-        default : 'Update username'
+        default : undefined,
+        sparse: true
     },
     email: {
         type: String,
@@ -102,7 +103,7 @@ userSchema.methods.verifyUserEmail = function () {
     return token;
 }
 
-
+ 
 
 userSchema.methods.createPasswordResetToken = function () {
 

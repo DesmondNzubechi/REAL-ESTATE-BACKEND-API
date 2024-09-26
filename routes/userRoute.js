@@ -55,8 +55,8 @@ const router = express.Router();
  */
 router
     .route('/signup')
-    .post(authRateLimiter, signUpNewUser);
-
+    .post(signUpNewUser);
+ 
     /**
  * @swagger
  * /api/v1/user/googleAuth:
