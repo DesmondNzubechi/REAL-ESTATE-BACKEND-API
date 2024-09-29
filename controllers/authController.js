@@ -180,7 +180,7 @@ exports.signUpNewUser = catchAsync(async (req, res, next) => {
     sendEmail({
         name: `${newUser.firstName} ${newUser.lastName}`,
         email: newUser.email,
-        subject: "Email verification",
+        subject: "EMAIL VERIFICATION",
         message
     })
 
@@ -240,7 +240,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     try {
         sendEmail({
             message,
-            subject: "This password reset token is valid for only 30 minutes",
+            subject: "THIS PASSWORD RESET TOKEN IS ONLY VALID FOR 30 MINUTES",
             email : user.email,
             name : user.firstName
         })
@@ -380,6 +380,15 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
     //issue a new token to the user
     const newSigninToken = signToken(user._id);
+
+
+        sendEmail({
+            message: "You have successfully reset your password",
+            subject: "PASSWORD RESET SUCCESSFUL.",
+            email : user.email,
+            name : user.firstName
+        })
+
 
     //success response
     res.status(200).json({
