@@ -236,12 +236,13 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     //URL FOR RESETING PASSWORD
     const resetUrl = `${process.env.originUrl}/reset-password/${resetToken}`;
     const message = `forgot your passowrd? kindly submit your new password to ${resetUrl}. if you did not request for this kindly ignore.`
-
+ 
     try {
         sendEmail({
             message,
             subject: "This password reset token is valid for only 30 minutes",
-            email : user.email
+            email : user.email,
+            name : user.firstName
         })
 
         res.status(200).json({
