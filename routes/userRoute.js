@@ -1,27 +1,43 @@
-const express = require('express');
-const { signUpNewUser, signInWithGoogle, theGoogleCallback, loginUser, forgotPassword, resetPassword, changePassword, protectedRoute, verifyTheUserEmail, getMe, logoutUser, restrictTo} = require('../controllers/authController');
-const { getAllUser, createAUser, updateMe, getAUser, deleteAUser, updateProfilePicture } = require('../controllers/userController');
-const { uploadPhoto, uploadImageToCloudinary } = require('../controllers/uploadController');
+const express = require("express");
+const {
+  signUpNewUser,
+  signInWithGoogle,
+  theGoogleCallback,
+  loginUser,
+  forgotPassword,
+  resetPassword,
+  changePassword,
+  protectedRoute,
+  verifyTheUserEmail,
+  getMe,
+  logoutUser,
+  restrictTo,
+} = require("../controllers/authController");
+const {
+  getAllUser,
+  createAUser,
+  updateMe,
+  getAUser,
+  deleteAUser,
+  updateProfilePicture,
+} = require("../controllers/userController");
+const {
+  uploadPhoto,
+  uploadImageToCloudinary,
+} = require("../controllers/uploadController");
 //const { signInWithGoogle,  theGoogleCallback} = require('../controllers/googleAuthController');
 
 const rateLimit = require("express-rate-limit");
 
-
 const authRateLimiter = rateLimit({
-    max: 10,
-    windows : 60 * 60 * 1000,
-    message : "Too many request from this IP. Please try again after 1 hour.",
-    standardHeaders: true,
-    legalHeaders: true,
-})
-
-
-
- 
+  max: 10,
+  windows: 60 * 60 * 1000,
+  message: "Too many request from this IP. Please try again after 1 hour.",
+  standardHeaders: true,
+  legalHeaders: true,
+});
 
 const router = express.Router();
-
-
 
 ////ROUTE FOR SIGNING UP
 /**
@@ -53,11 +69,9 @@ const router = express.Router();
  *       400:
  *         description: Invalid input or validation error
  */
-router
-    .route('/signup')
-    .post(signUpNewUser);
- 
-    /**
+router.route("/signup").post(signUpNewUser);
+
+/**
  * @swagger
  * /api/v1/user/googleAuth:
  *   get:
@@ -67,16 +81,11 @@ router
  *       200:
  *         description: Redirect to Google authentication page
  */
-router
-.route('/googleAuth')
-.get(authRateLimiter, signInWithGoogle);
+router.route("/googleAuth").get(authRateLimiter, signInWithGoogle);
 
+router.route("/googleAuth/signin").get(authRateLimiter, theGoogleCallback);
 
-    router
-    .route('/googleAuth/signin')
-    .get(authRateLimiter, theGoogleCallback)
-
-    ////ROUTE FOR RESETING A PASSWORD
+////ROUTE FOR RESETING A PASSWORD
 /**
  * @swagger
  * /api/v1/user/resetPassword/{token}:
@@ -110,11 +119,9 @@ router
  *       400:
  *         description: Invalid token or password mismatch
  */
-router
-    .route('/resetPassword/:token')
-    .patch(resetPassword);
+router.route("/resetPassword/:token").patch(resetPassword);
 
-    ////ROUTE FOR FORGOT PASSWORD
+////ROUTE FOR FORGOT PASSWORD
 /**
  * @swagger
  * /api/v1/user/forgotPassword:
@@ -137,11 +144,9 @@ router
  *       404:
  *         description: User not found
  */
-router
-    .route('/forgotPassword')
-    .post(forgotPassword);
+router.route("/forgotPassword").post(forgotPassword);
 
-    ////ROUTE FOR LOGIN
+////ROUTE FOR LOGIN
 /**
  * @swagger
  * /api/v1/user/login:
@@ -168,11 +173,9 @@ router
  *       401:
  *         description: Invalid credentials
  */
-router
-    .route("/login")
-    .post(authRateLimiter, loginUser);
+router.route("/login").post(authRateLimiter, loginUser);
 
-    ////ROUTE FOR FETCHING ALL THE USER
+////ROUTE FOR FETCHING ALL THE USER
 /**
  * @swagger
  * /api/v1/user/getAllUser:
@@ -190,16 +193,14 @@ router
  *                 $ref: '#/components/schemas/User'
  */
 router
-    .route("/getAllUser") 
-    .get(protectedRoute, restrictTo('admin'), getAllUser);
+  .route("/getAllUser")
+  .get(protectedRoute, restrictTo("admin"), getAllUser);
 
-router 
-    .route('/changePassword')
-    .patch(protectedRoute, authRateLimiter, changePassword)
- 
 router
-    .route("/createAUser")
-    .post(createAUser)
+  .route("/changePassword")
+  .patch(protectedRoute, authRateLimiter, changePassword);
+
+router.route("/createAUser").post(createAUser);
 
 /**
  * @swagger
@@ -231,16 +232,19 @@ router
  *       400:
  *         description: Validation error
  */
-router
-    .route('/updateUser/:id')
-    .patch(protectedRoute, updateMe);
+router.route("/updateUser/:id").patch(protectedRoute, updateMe);
 
-    router
-    .route('/updateProfilePic/:id')
-    .patch(protectedRoute, uploadPhoto, uploadImageToCloudinary, updateProfilePicture)
- 
-    //ROUTE FOR DELETING  A USER
-  /**
+router
+  .route("/updateProfilePic/:id")
+  .patch(
+    protectedRoute,
+    uploadPhoto,
+    uploadImageToCloudinary,
+    updateProfilePicture
+  );
+
+//ROUTE FOR DELETING  A USER
+/**
  * @swagger
  * /api/v1/user/deleteAUser:
  *   patch:
@@ -262,24 +266,17 @@ router
  *       404:
  *         description: User not found
  */
-router
-.route('/deleteAUser')
-.patch(protectedRoute, deleteAUser);
-
+router.route("/deleteAUser").patch(protectedRoute, deleteAUser);
 
 router
-    .route("/verifyTheUserEmail/:theToken")
-    .patch(protectedRoute, verifyTheUserEmail)
+  .route("/verifyTheUserEmail/:theToken")
+  .patch(protectedRoute, verifyTheUserEmail);
 
-router 
-    .route('/getAUser/:id')
-    .get(protectedRoute, getAUser)
+router.route("/getAUser/:id").get(protectedRoute, getAUser);
 
-router
-    .route('/me')
-    .get(getMe)
+router.route("/me").get(getMe);
 
- /**
+/**
  * @swagger
  * /api/v1/user/logout:
  *   post:
@@ -289,11 +286,6 @@ router
  *       200:
  *         description: User logged out successfully
  */
-router
-.route('/logout')
-.post(protectedRoute, logoutUser);
-
+router.route("/logout").post(protectedRoute, logoutUser);
 
 module.exports = router;
-
-

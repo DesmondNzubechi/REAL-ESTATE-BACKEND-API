@@ -17,7 +17,7 @@ const router = express.Router();
  *         description: A list of all activities
  *         content:
  *           application/json:
- *             schema:
+ *             schema: 
  *               type: array
  *               items:
  *                 type: object
